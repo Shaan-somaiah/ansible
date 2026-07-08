@@ -21,6 +21,7 @@
       - nmap
       - figlet
       - nfs-common
+      - iperf3
     state: present
     update_cache: yes
 
