@@ -71,18 +71,28 @@
   register: kopia_key
 
 - name: Install Kopia GPG key
-  ansible.builtin.command: >
-    gpg --dearmor
-    --yes
-    --output /etc/apt/keyrings/kopia-keyring.gpg
-    /tmp/kopia-signing-key
+  ansible.builtin.command:
+    cmd: >
+      gpg --dearmor
+      --yes
+      --output /etc/apt/keyrings/kopia-keyring.gpg
+      /tmp/kopia-signing-key
   when: kopia_key.changed
 
 - name: Configure Kopia repository
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/kopia-keyring.gpg] http://packages.kopia.io/apt/ stable main"
-    filename: kopia
+  ansible.builtin.deb822_repository:
+    name: kopia
+    types:
+      - deb
+    uris: http://packages.kopia.io/apt/
+    suites: stable
+    components:
+      - main
+    signed_by: /etc/apt/keyrings/kopia-keyring.gpg
     state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
     update_cache: true
 
 - name: Install Kopia
@@ -119,13 +129,13 @@
     group: "root"
     mode: "0700"
 
-- name: Install rclone configuration
-  ansible.builtin.copy:
-    src: rclone.conf
-    dest: /root/.config/rclone/rclone.conf
-    owner: "root"
-    group: "root"
-    mode: "0600"
+# - name: Install rclone configuration
+#   ansible.builtin.copy:
+#     src: rclone.conf
+#     dest: /root/.config/rclone/rclone.conf
+#     owner: "root"
+#     group: "root"
+#     mode: "0600"
 
 - name: Install Kopia repository configuration
   ansible.builtin.copy:

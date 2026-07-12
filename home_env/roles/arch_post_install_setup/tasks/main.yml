@@ -27,9 +27,9 @@
 #- name: Gen colours from pywal
 #  ansible.builtin.shell: |
 #    wal -i /home/{{ ansible_user }}/.config/background
-  args:
-    executable: /bin/bash
-  ignore_errors: true  
+#  args:
+#    executable: /bin/bash
+#  ignore_errors: true  
 
 - name: Setup snapper for BTRFS snapshots
   ansible.builtin.shell: |
@@ -72,7 +72,7 @@
     mode: preserve
   register: copy_chrony_conf
 
-- name: Restart chrony is conf file was copied
+- name: Restart chrony if conf file was copied
   ansible.builtin.systemd:
     name: chronyd
     state: restarted

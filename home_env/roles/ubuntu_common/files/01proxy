@@ -1,0 +1,2 @@
+Acquire::http::Proxy "http://dns-node2:3142";
+Acquire::https::Proxy "DIRECT";

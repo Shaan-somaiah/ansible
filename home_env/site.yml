@@ -8,15 +8,25 @@
     - { role: arch_copy_config_files }
     - { role: arch_post_install_setup , become: true }
 
-- name: Setup ubuntu-servers
-  hosts: ubuntu_servers
-  roles:
-    - { role: ubuntu_common , become: true }
-
 - name: Setup dns servers
   hosts: dns_servers
   roles:
     - { role: dns_setup, become: true }
+
+- name: Setup NTP server
+  hosts: raspi
+  roles:
+    - { role: setup_ntp_server, become: true }
+
+- name: Setup apt-repo
+  hosts: dns-node2
+  roles:
+  - { role: setup_apt_repo, become: true }
+
+- name: Setup ubuntu-servers
+  hosts: ubuntu_servers
+  roles:
+    - { role: ubuntu_common , become: true }
 
 - name: Setup nginx reverse proxy
   hosts: raspi
@@ -29,11 +39,6 @@
   hosts: raspi
   roles:
     - { role: setup_qnetd, become: true }
-
-- name: Setup NTP server
-  hosts: raspi
-  roles:
-    - { role: setup_ntp_server, become: true }
 
 - name: Setup nas 
   hosts: nas

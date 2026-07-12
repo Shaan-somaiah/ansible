@@ -1,0 +1,13 @@
+---
+- name: Install dependencies
+  apt:
+    name:
+      - apt-cacher-ng
+    state: present
+    update_cache: yes
+
+- name: Allow tcp port 3142 in ufw for apt-cacher-ng
+  ufw:
+    rule: allow
+    port: 3142
+    proto: tcp
