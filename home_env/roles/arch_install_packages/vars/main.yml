@@ -81,3 +81,5 @@
     - nwg-look
     - adw-gtk-theme
     - iperf3
+    - strace
+    - nvme-cli
