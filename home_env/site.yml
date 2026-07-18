@@ -30,8 +30,6 @@
 
 - name: Setup nginx reverse proxy
   hosts: raspi
-  vars_files:
-    - vault/setup_nginx_rp.yaml
   roles:
     - { role: setup_nginx_rp, become: true }
 
