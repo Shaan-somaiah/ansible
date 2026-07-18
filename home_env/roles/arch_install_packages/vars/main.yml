@@ -9,6 +9,7 @@
     - cmake
     - unzip
     - fd
+    - terraform
     - snapper
     - fastfetch
     - wayland
