@@ -1,2 +1,3 @@
-Acquire::http::Proxy "http://dns-node2:3142";
+// Acquire::http::Proxy "http://dns-node2:3142";
+Acquire::http::Proxy "DIRECT";
 Acquire::https::Proxy "DIRECT";
