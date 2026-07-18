@@ -1,6 +1,15 @@
 ## Play to setup dns server on ubuntu server
 ## Uses pihole + bind9 within docker containers
 ---
+
+- name: Modify /etc/resolv.conf with fallback and localdns
+  copy:
+    dest: /etc/resolv.conf
+    content: |
+      search {{ SEARCH_DOMAIN }}
+      nameserver {{ DNS_1 }}
+      nameserver {{ DNS_2 }}
+
 - name: Update apt package repository
   apt:
     update_cache: yes
@@ -97,13 +106,19 @@
     enabled: no
   ignore_errors: true
 
-- name: Modify /etc/resolv.conf with fallback and localdns
-  copy:
-    dest: /etc/resolv.conf
-    content: |
-      search {{ SEARCH_DOMAIN }}
-      nameserver {{ DNS_1 }}
-      nameserver {{ DNS_2 }}
+- name: Stop and disable avahi socket to free up port 5353
+  systemd:
+    name: avahi-daemon.socket
+    state: stopped
+    enabled: no
+  ignore_errors: true
+
+- name: Stop and disable avahi service to free up port 5353
+  systemd:
+    name: avahi-daemon.service
+    state: stopped
+    enabled: no
+  ignore_errors: true
 
 - name: Copy docker compose and config files to /home/{{ ansible_user }}
   copy:
