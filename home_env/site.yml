@@ -23,10 +23,10 @@
   roles:
   - { role: setup_apt_repo, become: true }
 
-- name: Setup ubuntu-servers
-  hosts: ubuntu_servers
+- name: Setup debian-servers
+  hosts: debian_servers
   roles:
-    - { role: ubuntu_common , become: true }
+    - { role: debian_common , become: true }
 
 - name: Setup nginx reverse proxy
   hosts: raspi
