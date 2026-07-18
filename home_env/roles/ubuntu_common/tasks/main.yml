@@ -23,7 +23,7 @@
       - ca-certificates
       - dnsutils
       - iputils-ping
-#      - ufw
+      - ufw
       - lsof
       - chrony
       - nmap
@@ -34,15 +34,15 @@
     state: present
     update_cache: yes
 
-# - name: Allow ssh port in ufw
-#   ufw:
-#     rule: allow
-#     port: 22
-#     proto: tcp
+- name: Allow ssh port in ufw
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
 
-# - name: Enable ufw
-#   ufw:
-#     state: enabled
+- name: Enable ufw
+  ufw:
+    state: enabled
 
 - name: Comment out existing chrony NTP sources
   ansible.builtin.replace:
