@@ -44,23 +44,26 @@
   ufw:
     state: enabled
 
-- name: Comment out existing chrony NTP sources
-  ansible.builtin.replace:
-    path: /etc/chrony/chrony.conf
-    regexp: '^(?!#)(pool|server|sourcedir)\s+.*'
-    replace: '# \g<0>'
+- block:
+    - name: Comment out existing chrony NTP sources
+      ansible.builtin.replace:
+        path: /etc/chrony/chrony.conf
+        regexp: '^(?!#)(pool|server|sourcedir)\s+.*'
+        replace: '# \g<0>'
 
-- name: Add custom NTP servers
-  ansible.builtin.blockinfile:
-    path: /etc/chrony/chrony.conf
-    marker: "# {mark} ANSIBLE MANAGED NTP SOURCES"
-    block: |
-      server raspi iburst
+    - name: Add custom NTP servers
+      ansible.builtin.blockinfile:
+        path: /etc/chrony/chrony.conf
+        marker: "# {mark} ANSIBLE MANAGED NTP SOURCES"
+        block: |
+          server raspi iburst
 
-- name: Restart chrony
-  ansible.builtin.systemd:
-    name: chrony
-    state: restarted
+    - name: Restart chrony
+      ansible.builtin.systemd:
+        name: chrony
+        state: restarted
+  when: inventory_hostname != "raspi"
+
 
 - name: Rename existing motd scripts
   ansible.builtin.command:
