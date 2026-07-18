@@ -74,11 +74,17 @@
     port: 53
     proto: tcp
 
-- name: Allow udp port 53 in ufw dor dns
+- name: Allow udp port 53 in ufw for dns
   ufw:
     rule: allow
     port: 53
     proto: udp
+
+- name: Allow ssh
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
 
 - name: Enable ufw
   ufw:
@@ -89,6 +95,7 @@
     name: systemd-resolved
     state: stopped
     enabled: no
+  ignore_errors: true
 
 - name: Modify /etc/resolv.conf with fallback and localdns
   copy:
