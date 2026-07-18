@@ -74,8 +74,8 @@
       --install-cert \
       -d "{{ wildcard_domain }}" \
       --key-file {{ nginx_base_dir }}/certs/privkey.pem \
-      --fullchain-file {{ nginx_base_dir }}/certs/fullchain.pem \
-      --reloadcmd "docker exec nginx-proxy nginx -s reload"
+      --fullchain-file {{ nginx_base_dir }}/certs/fullchain.pem
+##       --reloadcmd "docker exec nginx-proxy nginx -s reload"
   become_user: "{{ ansible_user }}"
 
 - name: Verify certificate files exist under {{ nginx_base_dir }}/certs
