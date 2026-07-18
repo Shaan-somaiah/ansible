@@ -9,15 +9,7 @@
     name:
       - corosync
       - corosync-qnetd
-      - dnsutils
       - ufw
-      - ninja-build
-      - cmake
-      - libgoogle-glog-dev
-      - libgflags-dev
-      - libgrpc++-dev
-      - protobuf-compiler-grpc
-      - protobuf-compiler
     state: present
 
 
