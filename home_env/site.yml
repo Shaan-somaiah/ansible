@@ -60,8 +60,3 @@
   serial: 1
   roles:
     - { role: k8s_worker, become: true }
-
-- name: Setup dev environment
-  hosts: raspi
-  roles:
-    - { role: setup_dev, become: true }
