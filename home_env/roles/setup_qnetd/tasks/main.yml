@@ -12,6 +12,11 @@
       - ufw
     state: present
 
+- name: Allow port ssh in ufw
+  ufw: 
+    rule: allow
+    port: 22
+    proto: tcp
 
 - name: Allow port 5403 in ufw for qnetd
   ufw: 

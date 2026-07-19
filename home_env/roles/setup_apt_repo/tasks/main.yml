@@ -3,6 +3,7 @@
   apt:
     name:
       - apt-cacher-ng
+      - ufw
     state: present
     update_cache: yes
 
@@ -10,4 +11,10 @@
   ufw:
     rule: allow
     port: 3142
+    proto: tcp
+
+- name: Allow ssh port in ufw
+  ufw:
+    rule: allow
+    port: 22
     proto: tcp

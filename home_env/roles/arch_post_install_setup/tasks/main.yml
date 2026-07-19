@@ -77,3 +77,19 @@
     name: chronyd
     state: restarted
   when: copy_chrony_conf.changed
+
+- name: Create directory for nfs mount
+  file:
+    path: /mnt/nas_common
+    state: directory
+    mode: "0755"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Configure NFS mount
+  ansible.posix.mount:
+    src: nas:/dump/main/common
+    path: /mnt/nas_common
+    fstype: nfs
+    opts: defaults,_netdev,nofail
+    state: present

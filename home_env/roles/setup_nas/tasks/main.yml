@@ -18,6 +18,12 @@
     state: present
     update_cache: true
 
+- name: Allow ssh 
+  ufw: 
+    rule: allow
+    port: 22
+    proto: tcp
+
 - name: Allow nfs port in ufw
   ufw:
     rule: allow
@@ -39,9 +45,6 @@
   ansible.builtin.command:
     cmd: zpool set cachefile=/etc/zfs/zpool.cache {{ zfs_pool }}
   changed_when: false
-
-
-
 
 - name: Enabled installed services
   ansible.builtin.service:
@@ -147,7 +150,6 @@
     owner: "root"
     group: "root"
     mode: "0700"
-
 
 #Deal with case where token with refresh token already in place
 # - name: Install rclone configuration

@@ -22,6 +22,12 @@
     port: 123
     proto: udp
 
+- name: Allow ssh port in ufw
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
+
 - name: Enable ufw
   ufw:
     state: enabled

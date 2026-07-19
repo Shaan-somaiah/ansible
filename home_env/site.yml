@@ -1,13 +1,4 @@
 ---
-- name: setup arch-main
-  hosts: arch-main
-  roles:
-    - { role: arch_network_setup, become: true }
-    - { role: arch_grub_setup, become: true }
-    - { role: arch_install_packages, become: true }
-    - { role: arch_copy_config_files }
-    - { role: arch_post_install_setup , become: true }
-
 - name: Setup dns servers
   hosts: dns_servers
   roles:
@@ -42,6 +33,15 @@
   hosts: nas
   roles:
     - { role: setup_nas, become: true }
+
+- name: setup arch-main
+  hosts: arch-main
+  roles:
+    - { role: arch_network_setup, become: true }
+    - { role: arch_grub_setup, become: true }
+    - { role: arch_install_packages, become: true }
+    - { role: arch_copy_config_files }
+    - { role: arch_post_install_setup , become: true }
 
 - name: Setup K8s common
   hosts: k8s_cluster
