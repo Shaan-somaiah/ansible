@@ -58,3 +58,8 @@
   serial: 1
   roles:
     - { role: k8s_worker, become: true }
+
+- name: Setup proxmox basic
+  hosts: proxmox
+  roles:
+    - { role: setup_proxmox, become: true }

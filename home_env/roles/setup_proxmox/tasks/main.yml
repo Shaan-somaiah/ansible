@@ -18,6 +18,7 @@
 - name: Install dependencies
   apt:
     name:
+      - sudo
       - dnsutils
       - iputils-ping
       - chrony
