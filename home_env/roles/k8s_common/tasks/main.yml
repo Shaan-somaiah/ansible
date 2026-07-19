@@ -74,6 +74,8 @@
 - name: Apply sysctl
   command: sysctl --system
 
+
+# see https://github.com/kubernetes/kubernetes/issues/133098
 - name: Create dir for k8s keyring
   file:
     path: /etc/apt/keyrings
@@ -141,3 +143,18 @@
   systemd:
     name: kubelet
     enabled: yes
+
+- name: Create directory for nfs mount
+  file:
+    path: /mnt/kube_vol
+    state: directory
+    mode: "0755"
+
+
+- name: Configure NFS mount
+  ansible.posix.mount:
+    src: nas:/dump/main/kube_vol
+    path: /mnt/kube_vol
+    fstype: nfs
+    opts: defaults,_netdev,nofail
+    state: present
