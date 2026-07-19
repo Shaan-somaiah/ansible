@@ -83,17 +83,15 @@
 - block:
   - name: Create directory for nfs mount
     file:
-      path: /mnt/kube_vol
+      path: /mnt/pbs
       state: directory
       mode: "0755"
 
   - name: Configure NFS mount
     ansible.posix.mount:
-      src: nas:/dump/main/kube_vol
-      path: /mnt/kube_vol
+      src: nas:/dump/main/pbs
+      path: /mnt/pbs
       fstype: nfs
       opts: defaults,_netdev,nofail
       state: present
-  when: inventory_hostname = "pbs"
-
-    
+  when: inventory_hostname == "pbs"
