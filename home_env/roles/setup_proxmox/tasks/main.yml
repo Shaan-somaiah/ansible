@@ -1,0 +1,98 @@
+---
+- name: Copy apt proxy config
+  copy:
+    src: 01proxy
+    dest: /etc/apt/apt.conf.d/01proxy
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Update apt package repository
+  apt:
+    update_cache: yes
+
+- name: Upgrade all packages
+  apt:
+    upgrade: yes
+
+- name: Install dependencies
+  apt:
+    name:
+      - dnsutils
+      - iputils-ping
+      - chrony
+      - figlet
+      - iperf3
+    state: present
+    update_cache: yes
+
+- name: Comment out existing chrony NTP sources
+  ansible.builtin.replace:
+    path: /etc/chrony/chrony.conf
+    regexp: '^(?!#)(pool|server|sourcedir)\s+.*'
+    replace: '# \g<0>'
+
+- name: Add custom NTP servers
+  ansible.builtin.blockinfile:
+    path: /etc/chrony/chrony.conf
+    marker: "# {mark} ANSIBLE MANAGED NTP SOURCES"
+    block: |
+      server raspi iburst
+
+- name: Restart chrony
+  ansible.builtin.systemd:
+    name: chrony
+    state: restarted
+
+- name: Rename existing motd scripts
+  ansible.builtin.command:
+    cmd: mv /etc/update-motd.d /etc/update-motd.d-backup
+  args:
+    creates: /etc/update-motd.d-backup
+
+- name: Copy my motd.sh scipt to profile
+  copy:
+    src: motd.sh
+    dest: /etc/profile.d/motd.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy sshd config to pam.d
+  copy:
+    src: sshd
+    dest: /etc/pam.d/sshd
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy sshd_config to /etc/ssh
+  copy:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Restart ssh
+  ansible.builtin.systemd:
+    name: ssh
+    state: restarted
+
+- block:
+  - name: Create directory for nfs mount
+    file:
+      path: /mnt/kube_vol
+      state: directory
+      mode: "0755"
+
+  - name: Configure NFS mount
+    ansible.posix.mount:
+      src: nas:/dump/main/kube_vol
+      path: /mnt/kube_vol
+      fstype: nfs
+      opts: defaults,_netdev,nofail
+      state: present
+  when: inventory_hostname = "pbs"
+
+    
