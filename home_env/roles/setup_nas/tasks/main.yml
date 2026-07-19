@@ -1,5 +1,10 @@
 ---
-## need to enable contrib repository first
+- name: Enable contrib repository
+  ansible.builtin.replace:
+    path: /etc/apt/sources.list
+    regexp: '\bmain\b'
+    replace: 'main contrib'
+
 - name: Install required packages
   ansible.builtin.apt:
     name:
@@ -34,12 +39,19 @@
   ufw:
     state: enabled
 
-## Import zpool first
-
-- name: Verify ZFS pool exists
+- name: Check if ZFS pool is imported
   ansible.builtin.command:
     cmd: zpool list {{ zfs_pool }}
+  register: zpool_status
   changed_when: false
+  failed_when: false
+
+- name: Import ZFS pool
+  ansible.builtin.command:
+    cmd: zpool import {{ zfs_pool }}
+  when: zpool_status.rc != 0
+  register: zpool_import
+  changed_when: zpool_import.rc == 0
 
 - name: Configure ZFS cachefile
   ansible.builtin.command:
@@ -151,14 +163,19 @@
     group: "root"
     mode: "0700"
 
-#Deal with case where token with refresh token already in place
-# - name: Install rclone configuration
-#   ansible.builtin.copy:
-#     src: rclone.conf
-#     dest: /root/.config/rclone/rclone.conf
-#     owner: "root"
-#     group: "root"
-#     mode: "0600"
+- name: Check if rclone configuration already exists
+  ansible.builtin.stat:
+    path: /root/.config/rclone/rclone.conf
+  register: rclone_conf
+
+- name: Install rclone configuration
+  ansible.builtin.copy:
+    src: rclone.conf
+    dest: /root/.config/rclone/rclone.conf
+    owner: root
+    group: root
+    mode: "0600"
+  when: not rclone_conf.stat.exists
 
 - name: Install Kopia repository configuration
   ansible.builtin.copy:
@@ -183,11 +200,49 @@
   changed_when: false
   ignore_errors: true
 
-# - name: Display snapshot status
-#   ansible.builtin.debug:
-#     var: kopia_snapshots.stdout_lines
+- name: Display snapshot status
+  ansible.builtin.debug:
+    var: kopia_snapshots.stdout_lines
 
-# clone cloud archival repo and setup archive cronjob
-## enable monthy scrub
+- name: Clone repository
+  ansible.builtin.git:
+    repo: https://github.com/Shaan-somaiah/cloud_archive.git
+    dest: /home/{{ ansible_user }}/cloud_archive
+    version: main
 
-## Also setup nfs server correctly
+- name: Make archive log directory
+  ansible.builtin.file:
+    path: /var/log/cloud_archive
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Run archival every day at 2 AM
+  ansible.builtin.cron:
+    name: "Daily archival"
+    minute: "0"
+    hour: "18"
+    user: root
+    job: "/home/{{ ansible_user }}/cloud_archive/archive.py >> /var/log/cloud_archive/archive.INFO 2>&1"
+
+- name: Enable monthly ZFS scrub timer
+  ansible.builtin.systemd_service:
+    name: "zfs-scrub-monthly@{{ zfs_pool }}.timer"
+    enabled: true
+    state: started
+
+- name: Copy exports file
+  ansible.builtin.copy:
+    src: exports
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restart nfs-server
+  ansible.builtin.service:
+    name: nfs-server
+    enabled: true
+    state: restarted
+  
