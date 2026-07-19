@@ -43,6 +43,17 @@
     path: "/home/{{ ansible_user }}/.acme.sh/acme.sh"
   register: acme_installed
 
+- name: Wait for DNS resolution
+  ansible.builtin.command:
+    cmd: nslookup {{ item }}
+  register: dns_lookup
+  changed_when: false
+  retries: 10
+  delay: 5
+  until: dns_lookup.rc == 0
+  loop:
+    - "get.acme.sh"
+
 - name: Install acme.sh if not already installed
   shell: curl https://get.acme.sh | sh
   become_user: "{{ ansible_user }}"

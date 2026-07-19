@@ -16,6 +16,7 @@
       - gpg
       - rclone
       - smartmontools
+      - dnsutils
       - nvme-cli
       - jq
       - curl
@@ -96,6 +97,19 @@
     owner: root
     group: root
     mode: "0755"
+
+- name: Wait for DNS resolution
+  ansible.builtin.command:
+    cmd: nslookup {{ item }}
+  register: dns_lookup
+  changed_when: false
+  retries: 10
+  delay: 5
+  until: dns_lookup.rc == 0
+  loop:
+    - "kopia.io"
+    - "packages.kopia.io"
+    - "github.com"
 
 - name: Download Kopia GPG key
   ansible.builtin.get_url:

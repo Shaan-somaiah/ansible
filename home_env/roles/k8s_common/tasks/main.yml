@@ -82,6 +82,17 @@
     state: directory
     mode: "0755"
 
+- name: Wait for DNS resolution
+  ansible.builtin.command:
+    cmd: nslookup {{ item }}
+  register: dns_lookup
+  changed_when: false
+  retries: 10
+  delay: 5
+  until: dns_lookup.rc == 0
+  loop:
+    - "pkgs.k8s.io"
+
 - name: Fetch and place k8s keyring
   get_url:
     url: "https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_version }}/deb/Release.key"
