@@ -218,7 +218,7 @@
   ansible.builtin.debug:
     var: kopia_snapshots.stdout_lines
 
-- name: Clone repository
+- name: Clone cloud_archive repository
   ansible.builtin.git:
     repo: https://github.com/Shaan-somaiah/cloud_archive.git
     dest: /home/{{ ansible_user }}/cloud_archive
