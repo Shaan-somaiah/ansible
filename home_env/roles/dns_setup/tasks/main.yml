@@ -99,26 +99,19 @@
   ufw:
     state: enabled
 
-- name: Stop and disable systemd-resolvd to free up port 53
-  systemd:
-    name: systemd-resolved
-    state: stopped
-    enabled: no
-  ignore_errors: true
+- name: Gather service facts
+  service_facts:
 
-- name: Stop and disable avahi socket to free up port 5353
+- name: Stop services that may take up port 53
   systemd:
-    name: avahi-daemon.socket
+    name: "{{ item }}"
     state: stopped
-    enabled: no
-  ignore_errors: true
-
-- name: Stop and disable avahi service to free up port 5353
-  systemd:
-    name: avahi-daemon.service
-    state: stopped
-    enabled: no
-  ignore_errors: true
+    enabled: false
+  loop:
+    - systemd-resolved.service
+    - avahi-daemon.socket
+    - avahi-daemon.service
+  when: item in ansible_facts.services
 
 - name: Copy docker compose and config files to /home/{{ ansible_user }}
   copy:
