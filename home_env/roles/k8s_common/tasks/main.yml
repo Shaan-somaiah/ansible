@@ -130,13 +130,25 @@
 
 - name: Disable swap
   command: swapoff -a
-  when: ansible_facts['swaptotal_mb'] > 0
+  changed_when: false
 
 - name: Remove swap from fstab
   replace:
     path: /etc/fstab
     regexp: '^\s*([^#].*\s+swap\s+.*)$'
     replace: '# \1'
+
+- name: Check for active swap units
+  shell: systemctl list-unit-files --type=swap --no-legend | awk '{print $1}'
+  register: swap_units
+  changed_when: false
+
+- name: Mask swap units
+  systemd:
+    name: "{{ item }}"
+    masked: true
+  loop: "{{ swap_units.stdout_lines }}"
+  when: swap_units.stdout_lines | length > 0
 
 - name: Configure kubelet node IP
   copy:
