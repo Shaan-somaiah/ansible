@@ -48,12 +48,16 @@
     upgrade: true
   changed_when: false
 
-- name: Download and install required packages
-  community.general.pacman:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ my_packages }}"
+# - name: Download and install required packages
+#   community.general.pacman:
+#     name: "{{ item }}"
+#     state: present
+#   loop: "{{ my_packages }}"
 
+- name: Install required packages
+  community.general.pacman:
+    name: "{{ my_packages }}"
+    state: present
 
 - name: Enabled installed services
   ansible.builtin.service:
