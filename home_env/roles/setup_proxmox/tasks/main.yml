@@ -81,7 +81,7 @@
     state: restarted
 
 - block:
-  - name: Create directory for nfs mount
+  - name: Create directory for backup nfs mount
     file:
       path: /mnt/pbs
       state: directory
@@ -91,6 +91,22 @@
     ansible.posix.mount:
       src: nas:/dump/main/pbs
       path: /mnt/pbs
+      fstype: nfs
+      opts: defaults,_netdev,nofail
+      state: present
+  when: inventory_hostname == "pbs"
+
+- block:
+  - name: Create directory for archive nfs mount
+    file:
+      path: /mnt/pbs_archive
+      state: directory
+      mode: "0755"
+
+  - name: Configure NFS mount
+    ansible.posix.mount:
+      src: nas:/dump/main/pbs_archive
+      path: /mnt/pbs_archive
       fstype: nfs
       opts: defaults,_netdev,nofail
       state: present
