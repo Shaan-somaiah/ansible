@@ -40,6 +40,23 @@
   ufw:
     state: enabled
 
+- name: Attempt to load ZFS kernel module
+  ansible.builtin.command: modprobe zfs
+  register: modprobe_zfs
+  failed_when: false
+  changed_when: false
+
+- name: Reboot if ZFS module could not be loaded
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+  when: modprobe_zfs.rc != 0
+  register: rebooted
+
+- name: Load ZFS module after reboot
+  ansible.builtin.command: modprobe zfs
+  changed_when: false
+  when: rebooted is changed
+
 - name: Check if ZFS pool is imported
   ansible.builtin.command:
     cmd: zpool list {{ zfs_pool }}
@@ -232,7 +249,7 @@
     group: "root"
     mode: "0755"
 
-- name: Run archival every day at 2 AM
+- name: Run archival every day at 6 PM
   ansible.builtin.cron:
     name: "Daily archival"
     minute: "0"
