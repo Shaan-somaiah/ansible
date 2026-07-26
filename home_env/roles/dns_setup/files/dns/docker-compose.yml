@@ -11,7 +11,7 @@ services:
     environment:
       TZ: 'Asia/Calcutta'
       FTLCONF_dns_listeningMode: 'all'
-      FTLCONF_dns_upstream: 'bind9'
+      FTLCONF_dns_upstreams: 'bind'
     volumes:
       - './etc-pihole:/etc/pihole'
     cap_add:
