@@ -78,6 +78,36 @@
     state: restarted
   when: copy_chrony_conf.changed
 
+- name: Create .ssh directory
+  file:
+    path: /home/{{ ansible_user }}/.ssh
+    state: directory
+    mode: "0700"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Copy ssh key
+  ansible.builtin.copy:
+    src: id_ed25519
+    dest: "/home/{{ ansible_user }}/.ssh/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+
+- name: Copy ssh config
+  ansible.builtin.copy:
+    src: config
+    dest: "/home/{{ ansible_user }}/.ssh/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+
+- name: Restart chrony if conf file was copied
+  ansible.builtin.systemd:
+    name: chronyd
+    state: restarted
+  when: copy_chrony_conf.changed
+
 - name: Create directory for nfs mount
   file:
     path: /mnt/nas_common

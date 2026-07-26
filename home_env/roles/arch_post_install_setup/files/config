@@ -1,0 +1,63 @@
+Host arch-main
+	Hostname arch-main
+	User shaan
+	StrictHostKeyChecking no
+
+Host pve-node1
+	Hostname pve-node1
+	User root
+	StrictHostKeyChecking no
+
+Host pve-node2
+	Hostname pve-node2
+	User root
+	StrictHostKeyChecking no
+
+Host pbs
+	Hostname pbs
+	User root
+	StrictHostKeyChecking no
+
+Host k8s-master
+	Hostname k8s-master
+	User shaan
+	StrictHostKeyChecking no
+
+Host k8s-node1
+	Hostname k8s-node1
+	User shaan
+	StrictHostKeyChecking no
+
+Host k8s-node2
+	Hostname k8s-node2
+	User shaan
+	StrictHostKeyChecking no
+
+Host k8s-node3
+	Hostname k8s-node3
+        User shaan
+	StrictHostKeyChecking no
+
+Host raspi
+	Hostname raspi
+	User shaan
+	StrictHostKeyChecking no
+
+Host dns-node2
+	Hostname dns-node2
+	User shaan
+	StrictHostKeyChecking no
+
+Host router
+	Hostname router
+	User root
+	StrictHostKeyChecking no
+
+Host nas
+	Hostname nas
+	User shaan
+	StrictHostKeyChecking no
+
+Host winsrv
+	Hostname winsrv
+	User administrator
