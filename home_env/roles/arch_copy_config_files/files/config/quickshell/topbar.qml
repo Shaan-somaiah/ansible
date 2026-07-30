@@ -63,6 +63,10 @@ PanelWindow {
     SystemClock {
         id: clock
         precision: SystemClock.Seconds
+    }    
+    Process {
+        id: calenderProc
+        command: ["cal"]
     }
 
     // Left pill: notification + clock
@@ -77,27 +81,25 @@ PanelWindow {
         width: leftRow.implicitWidth + 24
         height: 35
         radius: 10
-        color: background
+        color: Qt.rgba(background.r, background.g, background.b, 0.6)
         Row {
             id: leftRow
             anchors.centerIn: parent
             spacing: 10
-            Text {
-                text: ""
-                color: foreground
-                font.family: "JetBrainsMono Nerd Font Mono"
-                font.pixelSize: 16
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: notificationProc.running = true
-                }
-            }
+            
             Text {
                 text: Qt.formatDateTime(clock.date, "hh:mm:ss AP")
                 color: foreground
                 font.family: "JetBrainsMono Nerd Font Mono"
-                font.pixelSize: 15
+                font.pixelSize: 14
+                MouseArea {
+                    hoverEnabled: true
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: notificationProc.running = true
+                    // onEntered: calenderProc.running = true
+                    // onExited:  notificationProc.running = true
+                }
             }
         }
     }
@@ -111,11 +113,11 @@ PanelWindow {
         width: workspaceRow.implicitWidth + 24
         height: 35
         radius: 10
-        color: background
+        color: Qt.rgba(background.r, background.g, background.b, 0.6)
         Row {
             id: workspaceRow
             anchors.centerIn: parent
-            spacing: 10
+            spacing: 17
             Repeater {
                 model: 5
                 delegate: Rectangle {
@@ -123,10 +125,10 @@ PanelWindow {
                     readonly property int workspaceId: index + 1
                     width: 10
                     height: 10
-                    radius: 5
+                    radius: 10
                     color: Hyprland.focusedWorkspace
                            && Hyprland.focusedWorkspace.id === workspaceId
-                           ? accent : inactive
+                           ? accent : background
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -150,7 +152,7 @@ PanelWindow {
         width: rightRow.implicitWidth + 24
         height: 35
         radius: 10
-        color: background
+        color: Qt.rgba(background.r, background.g, background.b, 0.6)
         property bool expanded: false
         Row {
             id: rightRow
