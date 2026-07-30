@@ -4,6 +4,8 @@
     - ttf-jetbrains-mono-nerd
     - ttf-fira-sans
     - thunar
+    - quickshell
+    - matugen
     - firefox
     - make
     - cmake

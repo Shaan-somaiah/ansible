@@ -31,6 +31,25 @@
 #    executable: /bin/bash
 #  ignore_errors: true  
 
+- name: Create colors directory
+  file:
+    path: /home/{{ ansible_user }}/.config/my_colors
+    state: directory
+    mode: "0700"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Generate colors from matugen
+  ansible.builtin.shell: |
+    matugen image \
+      /home/{{ ansible_user }}/.config/background.jpg \
+      --mode dark \
+      --source-color-index 0 \
+      --json hex \
+      > /home/{{ ansible_user }}/.config/my_colors/colors.json
+  args:
+    executable: /bin/bash
+
 - name: Setup snapper for BTRFS snapshots
   ansible.builtin.shell: |
     snapper -c root create-config /
