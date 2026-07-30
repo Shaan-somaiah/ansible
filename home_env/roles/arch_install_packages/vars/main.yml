@@ -25,7 +25,6 @@
     - cronie
     - bluez
     - bluez-utils
-    - waybar
     - hyprlock
     - hypridle
     - hyprpaper
