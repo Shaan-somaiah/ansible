@@ -159,3 +159,12 @@
       search {{ SEARCH_DOMAIN }}
       nameserver {{ DNS_1 }}
   when: dns_working is defined and dns_working.rc == 0
+
+- name: Add cron to restart dns
+  ansible.builtin.cron:
+    name: "Daily dns restart"
+    minute: "0"
+    hour: "6"
+    user: "{{ ansible_user }}"
+    job: "/usr/bin/docker compose -f /home/{{ ansible_user }}/dns/docker-compose.yml down && /usr/bin/docker compose -f /home/{{ ansible_user }}/dns/docker-compose.yml up -d"
+
