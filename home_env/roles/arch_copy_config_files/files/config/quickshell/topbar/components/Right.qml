@@ -26,7 +26,7 @@ Rectangle {
 
         System {}
 
-        Network {}
+        Sound {}
 
         Bluetooth {}
 

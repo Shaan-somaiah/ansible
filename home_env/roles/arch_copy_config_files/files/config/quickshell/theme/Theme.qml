@@ -32,7 +32,7 @@ QtObject {
         background.r,
         background.g,
         background.b,
-        0.6
+        0.7
     )
 
     readonly property color opaqueForeground:
@@ -40,7 +40,7 @@ QtObject {
         foreground.r,
         foreground.g,
         foreground.b,
-        0.6
+        0.7
     )
 
     readonly property font nerdfont: "JetBrainsMono Nerd Font Mono"

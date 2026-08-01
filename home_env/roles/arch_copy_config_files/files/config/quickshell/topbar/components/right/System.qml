@@ -8,7 +8,7 @@ Row {
 
     Process {
         id: systemProc
-        command: ["btop"]
+        command: ["kitty", "btop"]
     }
 
     readonly property string icon: {
@@ -17,7 +17,7 @@ Row {
 
     Text {
         text: icon
-        color: Theme.opaqueForeground
+        color: Theme.foreground
         font {
             family: Theme.nerdfont
             pixelSize: 15

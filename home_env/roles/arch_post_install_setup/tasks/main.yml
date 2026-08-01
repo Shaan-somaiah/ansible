@@ -31,6 +31,12 @@
 #    executable: /bin/bash
 #  ignore_errors: true  
 
+- name: Create walpaper sym link
+  ansible.builtin.file:
+    src: /home/{{ ansible_user }}/.config/walpapers/lofi.jpg
+    dest: /home/{{ ansible_user }}/.config/background.jpg
+    state: link
+
 - name: Create colors directory
   file:
     path: /home/{{ ansible_user }}/.config/my_colors

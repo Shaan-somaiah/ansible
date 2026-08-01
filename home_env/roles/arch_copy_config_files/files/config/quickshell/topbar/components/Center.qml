@@ -31,7 +31,7 @@ Rectangle {
                 height: 10
                 radius: 10
                 color: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === workspaceId
-                       ? Theme.opaqueForeground : Theme.opaqueBackground
+                       ? Theme.foreground : Theme.opaqueForeground
 
                 MouseArea {
                     anchors.fill: parent

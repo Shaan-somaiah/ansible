@@ -2,13 +2,13 @@
   "colors": {
     "background": {
       "dark": {
-        "color": "#0e1513"
+        "color": "#141318"
       },
       "default": {
-        "color": "#0e1513"
+        "color": "#141318"
       },
       "light": {
-        "color": "#f4fbf8"
+        "color": "#fdf7ff"
       }
     },
     "error": {
@@ -35,46 +35,46 @@
     },
     "inverse_on_surface": {
       "dark": {
-        "color": "#2b3230"
+        "color": "#312f35"
       },
       "default": {
-        "color": "#2b3230"
+        "color": "#312f35"
       },
       "light": {
-        "color": "#ecf2ef"
+        "color": "#f4eff7"
       }
     },
     "inverse_primary": {
       "dark": {
-        "color": "#006a60"
+        "color": "#625690"
       },
       "default": {
-        "color": "#006a60"
+        "color": "#625690"
       },
       "light": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       }
     },
     "inverse_surface": {
       "dark": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       },
       "default": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       },
       "light": {
-        "color": "#2b3230"
+        "color": "#312f35"
       }
     },
     "on_background": {
       "dark": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       },
       "default": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       },
       "light": {
-        "color": "#161d1c"
+        "color": "#1c1b20"
       }
     },
     "on_error": {
@@ -101,10 +101,10 @@
     },
     "on_primary": {
       "dark": {
-        "color": "#003731"
+        "color": "#33275e"
       },
       "default": {
-        "color": "#003731"
+        "color": "#33275e"
       },
       "light": {
         "color": "#ffffff"
@@ -112,43 +112,43 @@
     },
     "on_primary_container": {
       "dark": {
-        "color": "#9ef2e4"
+        "color": "#e7deff"
       },
       "default": {
-        "color": "#9ef2e4"
+        "color": "#e7deff"
       },
       "light": {
-        "color": "#00201c"
+        "color": "#1e1048"
       }
     },
     "on_primary_fixed": {
       "dark": {
-        "color": "#00201c"
+        "color": "#1e1048"
       },
       "default": {
-        "color": "#00201c"
+        "color": "#1e1048"
       },
       "light": {
-        "color": "#00201c"
+        "color": "#1e1048"
       }
     },
     "on_primary_fixed_variant": {
       "dark": {
-        "color": "#005048"
+        "color": "#4a3e76"
       },
       "default": {
-        "color": "#005048"
+        "color": "#4a3e76"
       },
       "light": {
-        "color": "#005048"
+        "color": "#4a3e76"
       }
     },
     "on_secondary": {
       "dark": {
-        "color": "#1c3531"
+        "color": "#322e41"
       },
       "default": {
-        "color": "#1c3531"
+        "color": "#322e41"
       },
       "light": {
         "color": "#ffffff"
@@ -156,65 +156,65 @@
     },
     "on_secondary_container": {
       "dark": {
-        "color": "#cce8e2"
+        "color": "#e7dff8"
       },
       "default": {
-        "color": "#cce8e2"
+        "color": "#e7dff8"
       },
       "light": {
-        "color": "#05201c"
+        "color": "#1d192b"
       }
     },
     "on_secondary_fixed": {
       "dark": {
-        "color": "#05201c"
+        "color": "#1d192b"
       },
       "default": {
-        "color": "#05201c"
+        "color": "#1d192b"
       },
       "light": {
-        "color": "#05201c"
+        "color": "#1d192b"
       }
     },
     "on_secondary_fixed_variant": {
       "dark": {
-        "color": "#334b47"
+        "color": "#494458"
       },
       "default": {
-        "color": "#334b47"
+        "color": "#494458"
       },
       "light": {
-        "color": "#334b47"
+        "color": "#494458"
       }
     },
     "on_surface": {
       "dark": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       },
       "default": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       },
       "light": {
-        "color": "#161d1c"
+        "color": "#1c1b20"
       }
     },
     "on_surface_variant": {
       "dark": {
-        "color": "#bec9c6"
+        "color": "#cac4cf"
       },
       "default": {
-        "color": "#bec9c6"
+        "color": "#cac4cf"
       },
       "light": {
-        "color": "#3f4947"
+        "color": "#48454e"
       }
     },
     "on_tertiary": {
       "dark": {
-        "color": "#153349"
+        "color": "#492534"
       },
       "default": {
-        "color": "#153349"
+        "color": "#492534"
       },
       "light": {
         "color": "#ffffff"
@@ -222,101 +222,101 @@
     },
     "on_tertiary_container": {
       "dark": {
-        "color": "#cce5ff"
+        "color": "#ffd9e5"
       },
       "default": {
-        "color": "#cce5ff"
+        "color": "#ffd9e5"
       },
       "light": {
-        "color": "#001e31"
+        "color": "#31111f"
       }
     },
     "on_tertiary_fixed": {
       "dark": {
-        "color": "#001e31"
+        "color": "#31111f"
       },
       "default": {
-        "color": "#001e31"
+        "color": "#31111f"
       },
       "light": {
-        "color": "#001e31"
+        "color": "#31111f"
       }
     },
     "on_tertiary_fixed_variant": {
       "dark": {
-        "color": "#2d4961"
+        "color": "#623b4a"
       },
       "default": {
-        "color": "#2d4961"
+        "color": "#623b4a"
       },
       "light": {
-        "color": "#2d4961"
+        "color": "#623b4a"
       }
     },
     "outline": {
       "dark": {
-        "color": "#899390"
+        "color": "#938f99"
       },
       "default": {
-        "color": "#899390"
+        "color": "#938f99"
       },
       "light": {
-        "color": "#6f7977"
+        "color": "#79757f"
       }
     },
     "outline_variant": {
       "dark": {
-        "color": "#3f4947"
+        "color": "#48454e"
       },
       "default": {
-        "color": "#3f4947"
+        "color": "#48454e"
       },
       "light": {
-        "color": "#bec9c6"
+        "color": "#cac4cf"
       }
     },
     "primary": {
       "dark": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       },
       "default": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       },
       "light": {
-        "color": "#006a60"
+        "color": "#625690"
       }
     },
     "primary_container": {
       "dark": {
-        "color": "#005048"
+        "color": "#4a3e76"
       },
       "default": {
-        "color": "#005048"
+        "color": "#4a3e76"
       },
       "light": {
-        "color": "#9ef2e4"
+        "color": "#e7deff"
       }
     },
     "primary_fixed": {
       "dark": {
-        "color": "#9ef2e4"
+        "color": "#e7deff"
       },
       "default": {
-        "color": "#9ef2e4"
+        "color": "#e7deff"
       },
       "light": {
-        "color": "#9ef2e4"
+        "color": "#e7deff"
       }
     },
     "primary_fixed_dim": {
       "dark": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       },
       "default": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       },
       "light": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       }
     },
     "scrim": {
@@ -332,46 +332,46 @@
     },
     "secondary": {
       "dark": {
-        "color": "#b1ccc6"
+        "color": "#cac3dc"
       },
       "default": {
-        "color": "#b1ccc6"
+        "color": "#cac3dc"
       },
       "light": {
-        "color": "#4a635f"
+        "color": "#615b71"
       }
     },
     "secondary_container": {
       "dark": {
-        "color": "#334b47"
+        "color": "#494458"
       },
       "default": {
-        "color": "#334b47"
+        "color": "#494458"
       },
       "light": {
-        "color": "#cce8e2"
+        "color": "#e7dff8"
       }
     },
     "secondary_fixed": {
       "dark": {
-        "color": "#cce8e2"
+        "color": "#e7dff8"
       },
       "default": {
-        "color": "#cce8e2"
+        "color": "#e7dff8"
       },
       "light": {
-        "color": "#cce8e2"
+        "color": "#e7dff8"
       }
     },
     "secondary_fixed_dim": {
       "dark": {
-        "color": "#b1ccc6"
+        "color": "#cac3dc"
       },
       "default": {
-        "color": "#b1ccc6"
+        "color": "#cac3dc"
       },
       "light": {
-        "color": "#b1ccc6"
+        "color": "#cac3dc"
       }
     },
     "shadow": {
@@ -387,87 +387,87 @@
     },
     "source_color": {
       "dark": {
-        "color": "#363f3d"
+        "color": "#6d59b7"
       },
       "default": {
-        "color": "#363f3d"
+        "color": "#6d59b7"
       },
       "light": {
-        "color": "#363f3d"
+        "color": "#6d59b7"
       }
     },
     "surface": {
       "dark": {
-        "color": "#0e1513"
+        "color": "#141318"
       },
       "default": {
-        "color": "#0e1513"
+        "color": "#141318"
       },
       "light": {
-        "color": "#f4fbf8"
+        "color": "#fdf7ff"
       }
     },
     "surface_bright": {
       "dark": {
-        "color": "#343b39"
+        "color": "#3a383e"
       },
       "default": {
-        "color": "#343b39"
+        "color": "#3a383e"
       },
       "light": {
-        "color": "#f4fbf8"
+        "color": "#fdf7ff"
       }
     },
     "surface_container": {
       "dark": {
-        "color": "#1a211f"
+        "color": "#201f24"
       },
       "default": {
-        "color": "#1a211f"
+        "color": "#201f24"
       },
       "light": {
-        "color": "#e9efed"
+        "color": "#f1ecf4"
       }
     },
     "surface_container_high": {
       "dark": {
-        "color": "#252b2a"
+        "color": "#2b292f"
       },
       "default": {
-        "color": "#252b2a"
+        "color": "#2b292f"
       },
       "light": {
-        "color": "#e3eae7"
+        "color": "#ece6ee"
       }
     },
     "surface_container_highest": {
       "dark": {
-        "color": "#303635"
+        "color": "#36343a"
       },
       "default": {
-        "color": "#303635"
+        "color": "#36343a"
       },
       "light": {
-        "color": "#dde4e1"
+        "color": "#e6e1e9"
       }
     },
     "surface_container_low": {
       "dark": {
-        "color": "#161d1c"
+        "color": "#1c1b20"
       },
       "default": {
-        "color": "#161d1c"
+        "color": "#1c1b20"
       },
       "light": {
-        "color": "#eff5f2"
+        "color": "#f7f2fa"
       }
     },
     "surface_container_lowest": {
       "dark": {
-        "color": "#090f0e"
+        "color": "#0f0d13"
       },
       "default": {
-        "color": "#090f0e"
+        "color": "#0f0d13"
       },
       "light": {
         "color": "#ffffff"
@@ -475,84 +475,83 @@
     },
     "surface_dim": {
       "dark": {
-        "color": "#0e1513"
+        "color": "#141318"
       },
       "default": {
-        "color": "#0e1513"
+        "color": "#141318"
       },
       "light": {
-        "color": "#d5dbd9"
+        "color": "#ddd8e0"
       }
     },
     "surface_tint": {
       "dark": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       },
       "default": {
-        "color": "#82d5c8"
+        "color": "#ccbeff"
       },
       "light": {
-        "color": "#006a60"
+        "color": "#625690"
       }
     },
     "surface_variant": {
       "dark": {
-        "color": "#3f4947"
+        "color": "#48454e"
       },
       "default": {
-        "color": "#3f4947"
+        "color": "#48454e"
       },
       "light": {
-        "color": "#dae5e1"
+        "color": "#e6e0ec"
       }
     },
     "tertiary": {
       "dark": {
-        "color": "#adcae6"
+        "color": "#eeb8cb"
       },
       "default": {
-        "color": "#adcae6"
+        "color": "#eeb8cb"
       },
       "light": {
-        "color": "#456179"
+        "color": "#7d5262"
       }
     },
     "tertiary_container": {
       "dark": {
-        "color": "#2d4961"
+        "color": "#623b4a"
       },
       "default": {
-        "color": "#2d4961"
+        "color": "#623b4a"
       },
       "light": {
-        "color": "#cce5ff"
+        "color": "#ffd9e5"
       }
     },
     "tertiary_fixed": {
       "dark": {
-        "color": "#cce5ff"
+        "color": "#ffd9e5"
       },
       "default": {
-        "color": "#cce5ff"
+        "color": "#ffd9e5"
       },
       "light": {
-        "color": "#cce5ff"
+        "color": "#ffd9e5"
       }
     },
     "tertiary_fixed_dim": {
       "dark": {
-        "color": "#adcae6"
+        "color": "#eeb8cb"
       },
       "default": {
-        "color": "#adcae6"
+        "color": "#eeb8cb"
       },
       "light": {
-        "color": "#adcae6"
+        "color": "#eeb8cb"
       }
     }
   },
   "image": "/home/shaan/.config/background.jpg",
   "is_dark_mode": true,
   "mode": "dark",
-
 }

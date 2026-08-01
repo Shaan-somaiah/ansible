@@ -36,7 +36,7 @@ Rectangle {
 
         Text {
             text: Qt.formatDateTime(system_clock.date, "ddd dd MMM - hh:mm AP")
-            color: Theme.opaqueForeground
+            color: Theme.foreground
             font.family: Theme.nerdfont
             font.pixelSize: 14
 

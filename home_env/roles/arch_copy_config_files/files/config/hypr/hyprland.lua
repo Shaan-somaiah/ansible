@@ -96,6 +96,13 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("swaync-client -df")
   hl.exec_cmd("pactl set-sink-mute @DEFAULT_SINK@ 0")
   hl.exec_cmd("wal -i ~/.config/background")
+  hl.exec_cmd("matugen image \
+      /home/{{ ansible_user }}/.config/background.jpg \
+      --mode dark \
+      --source-color-index 0 \
+      --json hex \
+      > /home/{{ ansible_user }}/.config/my_colors/colors.json")
+
 end)
 
 hl.bind("SUPER + 1", hl.dsp.exec_cmd(terminal))
