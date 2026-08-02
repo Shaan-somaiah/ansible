@@ -31,6 +31,7 @@
       - nfs-common
       - iperf3
       - iotop
+      - btop
     state: present
     update_cache: yes
 

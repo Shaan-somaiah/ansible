@@ -24,6 +24,7 @@
       - chrony
       - figlet
       - iperf3
+      - btop
     state: present
     update_cache: yes
 
