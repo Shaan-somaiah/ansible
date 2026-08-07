@@ -6,9 +6,8 @@ local menu = "rofi -show drun"
 local browser = "firefox"
 local code = "code"
 
-hl.monitor({ output = "eDP-1", disabled = true })
 hl.monitor({
-  output = "HDMI-A-1",
+  output = "DP-6",
   mode = "1920x1080@100",
   position = "auto",
   scale = "auto",

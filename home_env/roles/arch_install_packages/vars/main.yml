@@ -21,10 +21,12 @@
     - ufw
     - kitty
     - rsync
-##    - mesa 
-##    - vulkan-radeon 
-##    - lib32-mesa 
-##    - lib32-vulkan-radeon
+    - rclone
+    - mesa 
+    - amdgpu_top
+    - vulkan-radeon 
+    - lib32-mesa 
+    - lib32-vulkan-radeon
     - git
     - openssh
     - cronie
@@ -34,6 +36,7 @@
     - hypridle
     - hyprpaper
     - qemu
+    - qemu-base
     - libvirt
     - virt-install 
     - virt-manager
@@ -78,9 +81,6 @@
     - noto-fonts-emoji
     - steam
     - mesa-utils
-    - gamemode
-    - mangohud
-    - gamescope
     - protontricks
     - nwg-look
     - adw-gtk-theme

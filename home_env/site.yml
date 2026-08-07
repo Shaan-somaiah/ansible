@@ -37,7 +37,7 @@
 - name: setup arch-main
   hosts: arch-main
   roles:
-    - { role: arch_network_setup, become: true }
+    # - { role: arch_network_setup, become: true }
     - { role: arch_grub_setup, become: true }
     - { role: arch_install_packages, become: true }
     - { role: arch_copy_config_files }
