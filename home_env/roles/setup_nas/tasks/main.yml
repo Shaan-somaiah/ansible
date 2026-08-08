@@ -66,7 +66,7 @@
 
 - name: Import ZFS pool
   ansible.builtin.command:
-    cmd: zpool import {{ zfs_pool }}
+    cmd: zpool import {{ zfs_pool }} -f
   when: zpool_status.rc != 0
   register: zpool_import
   changed_when: zpool_import.rc == 0
@@ -249,11 +249,12 @@
     group: "root"
     mode: "0755"
 
-- name: Run archival every day at 6 PM
+- name: Run archival every Sunday at 6 PM
   ansible.builtin.cron:
-    name: "Daily archival"
+    name: "Weekly archival"
     minute: "0"
     hour: "18"
+    weekday: "0"
     user: root
     job: "/home/{{ ansible_user }}/cloud_archive/archive.py >> /var/log/cloud_archive/archive.INFO 2>&1"
 
