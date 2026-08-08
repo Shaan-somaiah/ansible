@@ -37,6 +37,7 @@
     - hyprpaper
     - qemu
     - qemu-base
+    - qemu-hw-usb-host
     - libvirt
     - virt-install 
     - virt-manager
