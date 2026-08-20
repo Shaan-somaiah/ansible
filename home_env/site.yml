@@ -9,11 +9,6 @@
   roles:
     - { role: setup_ntp_server, become: true }
 
-- name: Setup apt-repo
-  hosts: dns-node2
-  roles:
-  - { role: setup_apt_repo, become: true }
-
 - name: Setup debian-servers
   hosts: debian_servers
   roles:
