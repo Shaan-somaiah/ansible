@@ -89,3 +89,4 @@
     - strace
     - nvme-cli
     - postgresql
+    - tmux

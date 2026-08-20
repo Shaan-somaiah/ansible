@@ -32,6 +32,7 @@
       - iperf3
       - iotop
       - btop
+      - tmux
     state: present
     update_cache: yes
 
