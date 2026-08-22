@@ -35,22 +35,54 @@
 ## Below task dynamically gets the name of the physical nic to provide as slave to the bridge. First physical connection excluding wireless driver is used
 ## When running in a vm and not bare metal , modify shell command to below as we need to now switch logic to include virtual nics:
 ##    find /sys/class/net -type l -printf '%f\n' | grep -v wl
+  # - name: Get target interface
+  #   ansible.builtin.shell: |
+  #     find /sys/class/net -type l -printf '%f\n' | grep -v wl | grep en
+  #   register: physical_nic
+  #   changed_when: false
+
+  # - name: Set target interface
+  #   set_fact:
+  #     target_iface: "{{ physical_nic.stdout_lines[0] }}"
+  #   changed_when: false
+
+  # - name: Display target interface
+  #   debug:
+  #     var: target_iface
+  #   changed_when: false
+
   - name: Get target interface
     ansible.builtin.shell: |
-      find /sys/class/net -type l -printf '%f\n' | grep -v wl | grep en
+     find /sys/class/net -type l -printf '%f\n' | grep '^en'
     register: physical_nic
     changed_when: false
-
+ 
   - name: Set target interface
-    set_fact:
+    ansible.builtin.set_fact:
       target_iface: "{{ physical_nic.stdout_lines[0] }}"
     changed_when: false
-
+  
+  - name: Get MAC address of target interface
+    ansible.builtin.slurp:
+      src: "/sys/class/net/{{ target_iface }}/address"
+    register: target_mac_raw
+    changed_when: false
+  
+  - name: Set target MAC
+    ansible.builtin.set_fact:
+      target_mac: "{{ target_mac_raw.content | b64decode | trim }}"
+    changed_when: false
+    
   - name: Display target interface
-    debug:
+    ansible.builtin.debug:
       var: target_iface
     changed_when: false
-
+  
+  - name: Display target MAC
+    ansible.builtin.debug:
+      var: target_mac
+    changed_when: false
+  
   - name: Delete connections excluding loopback
     community.general.nmcli:
       conn_name: "{{ item }}"
@@ -68,10 +100,11 @@
       stp: no
       autoconnect: yes
       state: present
-      method4: auto
+      method4: disabled
 #      ip4: "{{ host_ip }}"
 #      gw4: "{{ host_gateway }}"
 #      dns4: "{{ host_dns }}"
+      mac: "{{ target_mac }}"
     when: not network_setup_done.stat.exists or clean == 'true'
 
   - name: Add "{{ target_iface }}" as slave to br0
@@ -83,17 +116,29 @@
       state: present
     when: not network_setup_done.stat.exists or clean == 'true'
 
+  - name: Create VLAN 10 interface on br0
+    community.general.nmcli:
+      conn_name: br0.10
+      ifname: br0.10
+      type: vlan
+      vlanid: 10
+      vlandev: br0
+      state: present
+      autoconnect: yes
+      method4: auto
+    when: not network_setup_done.stat.exists or clean == 'true'
+
   - name: Create dir to place marker file 
     ansible.builtin.file:
       path: /var/log/ansibleMarkers
       state: directory
       recurse: yes
       mode: '0700'
-    when: not network_setup_done.stat.exists
+    when: not network_setup_done.stat.exists or clean == 'true'
 
   - name: Place marker file if all above succeeds
     ansible.builtin.file:
       path: /var/log/ansibleMarkers/NetworkSetup.success
       state: touch
       mode: '0600'
-    when: not network_setup_done.stat.exists 
+    when: not network_setup_done.stat.exists or clean == 'true'
