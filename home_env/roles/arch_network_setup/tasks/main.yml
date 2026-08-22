@@ -101,6 +101,7 @@
       autoconnect: yes
       state: present
       method4: disabled
+      method6: disabled
 #      ip4: "{{ host_ip }}"
 #      gw4: "{{ host_gateway }}"
 #      dns4: "{{ host_dns }}"
