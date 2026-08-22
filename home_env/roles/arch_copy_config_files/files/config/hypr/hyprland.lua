@@ -7,7 +7,7 @@ local browser = "firefox"
 local code = "code"
 
 hl.monitor({
-  output = "DP-6",
+  output = "DP-4",
   mode = "1920x1080@100",
   position = "auto",
   scale = "auto",
