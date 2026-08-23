@@ -1,5 +1,0 @@
----
-- name: setup raspi network
-  hosts: raspi
-  roles:
-    - { role: raspi_networking_setup, become: true }

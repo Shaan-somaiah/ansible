@@ -1,92 +1,52 @@
 ---
   ## To rerun pass clean=true as extra argument when running ansible playbook
-  - name: Check if play has already run previously by checking if marker file exists
-    ansible.builtin.stat:
-      path: /var/log/ansibleMarkers/NetworkSetup.success
-    register: network_setup_done  
+  # - name: Check if play has already run previously by checking if marker file exists
+  #   ansible.builtin.stat:
+  #     path: /var/log/ansibleMarkers/NetworkSetup.success
+  #   register: network_setup_done  
 
-  - name: Get all exsisting network manager connection
-    ansible.builtin.shell: |
-      nmcli -t -f NAME,DEVICE connection show 
-    args:
-      executable: /bin/bash
-    register: nmcli_connections
-    changed_when: false
-
-  - name: Parse connections into a list and exclude loopbackup
-    set_fact:
-      connections_to_delete: >-
-        {{
-          nmcli_connections.stdout_lines
-          | map('split', ':')
-          | rejectattr('1', 'equalto', 'lo')
-          | map('first')
-          | list
-        }}
-    changed_when: false
-
-  - name: Display filtered connections to delete
-    debug: 
-      var: connections_to_delete
-    changed_when: false
-
-  - name: Get target interface
-    ansible.builtin.shell: |
-     find /sys/class/net -type l -printf '%f\n' | grep '^e'
-    register: physical_nic
-    changed_when: false
- 
-  - name: Set target interface
-    ansible.builtin.set_fact:
-      target_iface: "{{ physical_nic.stdout_lines[0] }}"
-    changed_when: false
-    
-  - name: Display target interface
-    ansible.builtin.debug:
-      var: target_iface
-    changed_when: false
-  
-  - name: Delete connections excluding loopback
-    community.general.nmcli:
-      conn_name: "{{ item }}"
-      state: absent
-    loop: "{{ connections_to_delete }}"
-    when: not network_setup_done.stat.exists or clean == 'true'
-
-  - name: Create physical interface connection
-    community.general.nmcli:
-      conn_name: "{{ target_iface }}"
-      ifname: "{{ target_iface }}"
-      type: ethernet
-      state: present
-      autoconnect: yes
-      method4: auto
-      method6: disabled
-    when: not network_setup_done.stat.exists or clean == 'true'
- 
-  - name: Create VLAN 30 interface on target interface
-    community.general.nmcli:
-      conn_name: "{{ target_iface }}.30"
-      ifname: "{{ target_iface }}.30"
-      type: vlan
-      vlanid: 30
-      vlandev: "{{ target_iface }}"
-      state: present
-      autoconnect: yes
-      method4: auto
-    when: not network_setup_done.stat.exists or clean == 'true'
-
-  - name: Create dir to place marker file 
+  - name: Create dir for system connections
     ansible.builtin.file:
-      path: /var/log/ansibleMarkers
+      path: /etc/NetworkManager/system-connections
       state: directory
       recurse: yes
-      mode: '0700'
-    when: not network_setup_done.stat.exists or clean == 'true'
-
-  - name: Place marker file if all above succeeds
-    ansible.builtin.file:
-      path: /var/log/ansibleMarkers/NetworkSetup.success
-      state: touch
+      mode: '0755'
+  
+  - name: Copy eth0 config file
+    copy:
+      src: eth0.nmconnection
+      dest: /etc/NetworkManager/system-connections/eth0.nmconnection
+      owner: "root"
+      group: "root"
       mode: '0600'
-    when: not network_setup_done.stat.exists or clean == 'true'
+
+  - name: Copy eth0.30 config file
+    copy:
+      src: eth0.30.nmconnection
+      dest: /etc/NetworkManager/system-connections/eth0.30.nmconnection
+      owner: "root"
+      group: "root"
+      mode: '0600'
+
+  - name: Reload NetworkManager connection profiles
+    ansible.builtin.command:
+      cmd: nmcli connection reload
+
+  - name: Activate VLAN 30
+    ansible.builtin.command:
+      cmd: nmcli connection up eth0.30
+
+  # - name: Create dir to place marker file 
+  #   ansible.builtin.file:
+  #     path: /var/log/ansibleMarkers
+  #     state: directory
+  #     recurse: yes
+  #     mode: '0700'
+  #   when: not network_setup_done.stat.exists or clean == 'true'
+
+  # - name: Place marker file if all above succeeds
+  #   ansible.builtin.file:
+  #     path: /var/log/ansibleMarkers/NetworkSetup.success
+  #     state: touch
+  #     mode: '0600'
+  #   when: not network_setup_done.stat.exists or clean == 'true'

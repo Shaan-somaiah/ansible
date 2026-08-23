@@ -1,4 +1,9 @@
 ---
+- name: Setup raspi networking
+  hosts: raspi
+  roles:
+    - { role: raspi_network_setup, become: true }
+
 - name: Setup dns servers
   hosts: dns_servers
   roles:
