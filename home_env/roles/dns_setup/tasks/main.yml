@@ -54,17 +54,25 @@
   command: tar -C /usr/bin -xzf /tmp/nerdctl-2.3.5-linux-amd64.tar.gz
   when: nerdctl_downloaded.changed
 
-- name: Allow tcp port 53 in ufw for dns
+- name: Allow DNS to host
   ufw:
     rule: allow
     port: 53
-    proto: tcp
+    proto: "{{ item }}"
+  loop:
+    - tcp
+    - udp
 
-- name: Allow udp port 53 in ufw for dns
+- name: Allow forwarded DNS to containers
   ufw:
     rule: allow
-    port: 53
-    proto: udp
+    route: yes
+    to_ip: 172.25.100.0/24
+    port: "53"
+    proto: "{{ item }}"
+  loop:
+    - udp
+    - tcp
 
 - name: Allow ssh
   ufw:
