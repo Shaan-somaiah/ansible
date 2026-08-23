@@ -4,6 +4,12 @@
     path: /etc/kubernetes/admin.conf
   register: kubeadm_initialized
 
+- name: Stop kubelet if kubeadm needs to run
+  systemd:
+    name: kubelet
+    state: stopped
+  when: not kubeadm_initialized.stat.exists
+
 - name: Initialize Kubernetes control plane
   command: >
     kubeadm init
