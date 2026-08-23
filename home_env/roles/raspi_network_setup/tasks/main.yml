@@ -1,9 +1,5 @@
 ---
   ## To rerun pass clean=true as extra argument when running ansible playbook
-  # - name: Check if play has already run previously by checking if marker file exists
-  #   ansible.builtin.stat:
-  #     path: /var/log/ansibleMarkers/NetworkSetup.success
-  #   register: network_setup_done  
 
   - name: Create dir for system connections
     ansible.builtin.file:
@@ -36,17 +32,3 @@
     ansible.builtin.command:
       cmd: nmcli connection up eth0.30
 
-  # - name: Create dir to place marker file 
-  #   ansible.builtin.file:
-  #     path: /var/log/ansibleMarkers
-  #     state: directory
-  #     recurse: yes
-  #     mode: '0700'
-  #   when: not network_setup_done.stat.exists or clean == 'true'
-
-  # - name: Place marker file if all above succeeds
-  #   ansible.builtin.file:
-  #     path: /var/log/ansibleMarkers/NetworkSetup.success
-  #     state: touch
-  #     mode: '0600'
-  #   when: not network_setup_done.stat.exists or clean == 'true'
