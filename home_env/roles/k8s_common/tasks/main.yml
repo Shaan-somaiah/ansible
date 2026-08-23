@@ -42,13 +42,13 @@
     regexp: 'SystemdCgroup = false'
     replace: 'SystemdCgroup = true'
 
-- name: Enable containerd
+- name: Restart containerd
   systemd:
     name: containerd
-    state: started
+    state: restarted
     enabled: yes
 
-- name: Load kernel modules
+- name: Load kernel modules persistently
   copy:
     dest: /etc/modules-load.d/k8s.conf
     content: |
@@ -157,11 +157,6 @@
       KUBELET_EXTRA_ARGS=--node-ip={{ ansible_facts.default_ipv4.address }}
     mode: "0644"
 
-- name: Restart kubelet
-  systemd:
-    name: kubelet
-    state: restarted
-
 - name: Enable kubelet
   systemd:
     name: kubelet
@@ -172,7 +167,6 @@
     path: /mnt/kube_vol
     state: directory
     mode: "0755"
-
 
 - name: Configure NFS mount
   ansible.posix.mount:
