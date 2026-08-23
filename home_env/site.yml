@@ -19,10 +19,10 @@
   roles:
     - { role: debian_common , become: true }
 
-- name: Setup nginx reverse proxy
-  hosts: raspi
-  roles:
-    - { role: setup_nginx_rp, become: true }
+# - name: Setup nginx reverse proxy
+#   hosts: raspi
+#   roles:
+#     - { role: setup_nginx_rp, become: true }
 
 - name: Setup qnetd voter
   hosts: raspi
