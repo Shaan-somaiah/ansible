@@ -45,13 +45,13 @@
 - name: Download nerdctl minimal
   get_url:
     url: https://github.com/containerd/nerdctl/releases/download/v2.3.5/nerdctl-2.3.5-linux-arm64.tar.gz
-    dest: /tmp/nerdctl-2.3.5-linux-amd64.tar.gz
+    dest: /tmp/nerdctl-2.3.5-linux-arm64.tar.gz
     mode: '0755'
   register: nerdctl_downloaded
   when: not nerdctl_installed.stat.exists
 
 - name: Install nerdctl minimal
-  command: tar -C /usr/bin -xzf /tmp/nerdctl-2.3.5-linux-amd64.tar.gz
+  command: tar -C /usr/bin -xzf /tmp/nerdctl-2.3.5-linux-arm64.tar.gz
   when: nerdctl_downloaded.changed
 
 - name: Allow DNS to host
@@ -150,5 +150,5 @@
     name: "Daily dns restart"
     minute: "0"
     hour: "6"
-    user: "{{ ansible_user }}"
+    user: "root"
     job: "/usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml down && /usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml up -d"
