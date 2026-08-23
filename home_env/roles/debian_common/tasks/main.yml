@@ -81,6 +81,11 @@
     group: root
     mode: "0755"
 
+- name: Remove wifi script from raspi
+  file:
+    path: /etc/profile.d/wifi-check.sh
+    state: absent
+
 - name: Copy sshd config to pam.d
   copy:
     src: sshd
@@ -96,6 +101,14 @@
     owner: root
     group: root
     mode: "0600"
+
+- name: Copy bashrc
+  copy:
+    src: .bashrc
+    dest: /home/{{ ansible_user }}/.bashrc
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
 
 - name: Restart ssh
   ansible.builtin.systemd:
