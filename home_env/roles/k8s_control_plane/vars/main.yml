@@ -6,4 +6,9 @@ flannel_manifest: "https://github.com/flannel-io/flannel/releases/latest/downloa
 metrics_server_manifest: "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml"
 
 
-api_server_address: "10.25.30.50"
+api_server_ip: >-
+  {{
+    ansible_facts['eth0.30']['ipv4']['address']
+    if inventory_hostname == 'raspi'
+    else ansible_facts.default_ipv4.address
+  }}

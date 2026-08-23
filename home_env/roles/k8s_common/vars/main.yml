@@ -1,3 +1,10 @@
 ---
 kubernetes_version: "1.35"
 arch: "amd64"
+
+kubelet_node_ip: >-
+  {{
+    ansible_facts['eth0.30']['ipv4']['address']
+    if inventory_hostname == 'raspi'
+    else ansible_facts.default_ipv4.address
+  }}

@@ -13,13 +13,13 @@
 - name: Initialize Kubernetes control plane
   command: >
     kubeadm init
-    --apiserver-advertise-address={{ api_server_address }}
+    --apiserver-advertise-address={{ api_server_ip }}
     --pod-network-cidr={{ pod_network_cidr }}
   when: not kubeadm_initialized.stat.exists
 
 - name: Wait for API server
   wait_for:
-    host: "{{ api_server_address }}"
+    host: "{{ api_server_ip }}"
     port: 6443
     timeout: 120
 

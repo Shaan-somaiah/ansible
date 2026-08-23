@@ -166,7 +166,7 @@
   copy:
     dest: /etc/default/kubelet
     content: |
-      KUBELET_EXTRA_ARGS=--node-ip={{ ansible_facts.default_ipv4.address }}
+      KUBELET_EXTRA_ARGS=--node-ip={{ kubelet_node_ip }}
     mode: "0644"
 
 - name: Enable kubelet
