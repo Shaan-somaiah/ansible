@@ -14,14 +14,16 @@
   apt:
     update_cache: yes
 
-- name: Check to see if docker is installed
+- name: Check to see if nerdctl is installed
   stat:
-    path: /usr/bin/docker
-  register: docker_installed
+    path: /usr/bin/nerdctl
+  register: nerdctl_installed
 
 - name: Install dependencies
   apt:
     name:
+      - containerd
+      - containernetworking-plugins
       - curl
       - ca-certificates
       - dnsutils
@@ -34,48 +36,23 @@
     state: present
     update_cache: yes
 
-- name: Download official docker install script
+- name: Enable and start containerd
+  systemd:
+    name: containerd
+    enabled: true
+    state: started
+
+- name: Download nerdctl minimal
   get_url:
-    url: https://get.docker.com
-    dest: /tmp/get-docker.sh
+    url: https://github.com/containerd/nerdctl/releases/download/v2.3.5/nerdctl-2.3.5-linux-arm64.tar.gz
+    dest: /tmp/nerdctl-2.3.5-linux-amd64.tar.gz
     mode: '0755'
-  register: docker_script_downloaded
-  when: not docker_installed.stat.exists
+  register: nerdctl_downloaded
+  when: not nerdctl_installed.stat.exists
 
-- name: Run docker install script
-  command: |
-    bash /tmp/get-docker.sh
-  args:
-    creates: /usr/bin/docker
-  when: not docker_installed.stat.exists
-
-- name: Cleanup docker install script if docker installed successfully
-  file:
-    path: /tmp/get-docker.sh
-    state: absent
-
-- name: Ensure docker group exists
-  group:
-    name: docker
-    state: present
-
-- name: Add user to docker group
-  user:
-    name: "{{ ansible_user }}"
-    groups: docker
-    append: yes
-
-- name: Ensure all changes are flushed to disk
-  shell: sync
-
-- name: Reboot to apply group and path changes
-  reboot:
-    reboot_timeout: 300
-  when: docker_script_downloaded is defined and docker_script_downloaded.changed
-
-- name: Wait for system to come back online
-  wait_for_connection:
-    timeout: 300
+- name: Install nerdctl minimal
+  command: tar -C /usr/bin -xzf /tmp/nerdctl-2.3.5-linux-amd64.tar.gz
+  when: nerdctl_downloaded.changed
 
 - name: Allow tcp port 53 in ufw for dns
   ufw:
@@ -138,7 +115,7 @@
 
 - name: Start containers using docker compose
   command: |
-    docker compose up -d
+    nerdctl compose up -d
   args:
     chdir: /home/{{ ansible_user }}/dns
 
@@ -166,5 +143,4 @@
     minute: "0"
     hour: "6"
     user: "{{ ansible_user }}"
-    job: "/usr/bin/docker compose -f /home/{{ ansible_user }}/dns/docker-compose.yml down && /usr/bin/docker compose -f /home/{{ ansible_user }}/dns/docker-compose.yml up -d"
-
+    job: "/usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml down && /usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml up -d"

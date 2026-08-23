@@ -11,7 +11,7 @@ services:
     environment:
       TZ: 'Asia/Calcutta'
       FTLCONF_dns_listeningMode: 'all'
-      FTLCONF_dns_upstreams: 'bind'
+      FTLCONF_dns_upstreams: '172.25.100.7'
     volumes:
       - './etc-pihole:/etc/pihole'
     cap_add:
@@ -32,7 +32,8 @@ services:
       - ./bind:/etc/bind
     restart: unless-stopped
     networks:
-      - dns_net
+      dns_net:
+        ipv4_address: 172.25.100.7
 
 networks:
   dns_net:
