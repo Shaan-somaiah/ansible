@@ -1,4 +1,44 @@
 ---
+
+- name: Check active kernel cmdline
+  ansible.builtin.command:
+    cmd: cat /proc/cmdline
+  register: cmdline_before
+  changed_when: false
+
+- name: Print active kernel cmdline
+  ansible.builtin.debug:
+    msg: "{{ cmdline_before.stdout }}"
+
+- name: Check if memory cgroup parameters are already active
+  ansible.builtin.set_fact:
+    memory_cgroup_enabled: >-
+      {{
+        'cgroup_enable=memory' in cmdline_before.stdout and
+        'cgroup_memory=1' in cmdline_before.stdout
+      }}
+
+- name: Append memory cgroup parameters
+  ansible.builtin.shell: |
+    sed -i '$ s/$/ cgroup_enable=memory cgroup_memory=1/' /boot/firmware/cmdline.txt
+  args:
+    executable: /bin/bash
+  when: not memory_cgroup_enabled
+
+- name: Reboot and wait for system
+  ansible.builtin.reboot:
+  when: not memory_cgroup_enabled
+
+- name: Check active kernel cmdline after reboot
+  ansible.builtin.command:
+    cmd: cat /proc/cmdline
+  register: cmdline_after
+  changed_when: false
+
+- name: Print active kernel cmdline after reboot
+  ansible.builtin.debug:
+    msg: "{{ cmdline_after.stdout }}"
+
 - name: Check if Kubernetes is already initialized
   stat:
     path: /etc/kubernetes/admin.conf
