@@ -42,6 +42,18 @@
     regexp: 'SystemdCgroup = false'
     replace: 'SystemdCgroup = true'
 
+- name: Create CNI binary directory
+  ansible.builtin.file:
+    path: /opt/cni/bin
+    state: directory
+    mode: "0755"
+
+- name: Configure containerd CNI binary directory
+  ansible.builtin.replace:
+    path: /etc/containerd/config.toml
+    regexp: '^\s*bin_dir\s*=\s*".*"'
+    replace: '      bin_dir = "/opt/cni/bin"'
+
 - name: Restart containerd
   systemd:
     name: containerd
