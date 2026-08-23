@@ -5,6 +5,6 @@ arch: "amd64"
 kubelet_node_ip: >-
   {{
     ansible_facts['eth0.30']['ipv4']['address']
-    if inventory_hostname == 'raspi'
+    if 'eth0.30' in ansible_facts
     else ansible_facts.default_ipv4.address
   }}

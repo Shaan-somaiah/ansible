@@ -9,6 +9,6 @@ metrics_server_manifest: "https://github.com/kubernetes-sigs/metrics-server/rele
 api_server_ip: >-
   {{
     ansible_facts['eth0.30']['ipv4']['address']
-    if inventory_hostname == 'raspi'
+    if 'eth0.30' in ansible_facts
     else ansible_facts.default_ipv4.address
   }}
