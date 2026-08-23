@@ -25,9 +25,9 @@ services:
   bind:
     container_name: bind9
     image: ubuntu/bind9:9.20-26.04_stable
-    ports:
-      - "5353:53/udp"
-      - "5353:53/tcp"
+    # ports:
+    #   - "5353:53/udp"
+    #   - "5353:53/tcp"
     volumes:
       - ./bind:/etc/bind
     restart: unless-stopped
