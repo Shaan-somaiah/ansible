@@ -13,13 +13,13 @@
 - name: Initialize Kubernetes control plane
   command: >
     kubeadm init
-    --apiserver-advertise-address={{ ansible_facts.default_ipv4.address }}
+    --apiserver-advertise-address={{ api_server_address }}
     --pod-network-cidr={{ pod_network_cidr }}
   when: not kubeadm_initialized.stat.exists
 
 - name: Wait for API server
   wait_for:
-    host: "{{ ansible_facts.default_ipv4.address }}"
+    host: "{{ api_server_address }}"
     port: 6443
     timeout: 120
 

@@ -4,3 +4,6 @@ pod_network_cidr: "10.244.0.0/16"
 flannel_manifest: "https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml"
 
 metrics_server_manifest: "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml"
+
+
+api_server_address: "10.25.30.50"
