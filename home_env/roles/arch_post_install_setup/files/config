@@ -58,6 +58,11 @@ Host nas
 	User shaan
 	StrictHostKeyChecking no
 
+Host nas-node2
+	Hostname nas-node2
+	User shaan
+	StrictHostKeyChecking no
+
 Host winsrv
 	Hostname winsrv
 	User administrator
