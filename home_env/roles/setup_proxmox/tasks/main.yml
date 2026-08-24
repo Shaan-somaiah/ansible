@@ -25,6 +25,7 @@
       - figlet
       - iperf3
       - btop
+      - corosync-qdevice
     state: present
     update_cache: yes
 
