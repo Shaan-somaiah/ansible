@@ -1,0 +1,261 @@
+---
+- name: Enable contrib repository
+  ansible.builtin.replace:
+    path: /etc/apt/sources.list
+    regexp: '^(\s*deb(?:-src)?\s+\S+\s+\S+\s+.*\bmain\b)(?!\s+contrib\b)'
+    replace: '\1 contrib'
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - linux-headers-amd64
+      - zfs-dkms
+      - zfsutils-linux
+      - zfs-zed
+      - nfs-kernel-server
+      - gpg
+      - rclone
+      - smartmontools
+      - dnsutils
+      - nvme-cli
+      - jq
+      - curl
+      - git
+      - rsync
+    state: present
+    update_cache: true
+
+- name: Allow ssh 
+  ufw: 
+    rule: allow
+    port: 22
+    proto: tcp
+
+- name: Enable ufw
+  ufw:
+    state: enabled
+
+- name: Attempt to load ZFS kernel module
+  ansible.builtin.command: modprobe zfs
+  register: modprobe_zfs
+  failed_when: false
+  changed_when: false
+
+- name: Reboot if ZFS module could not be loaded
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+  when: modprobe_zfs.rc != 0
+  register: rebooted
+
+- name: Load ZFS module after reboot
+  ansible.builtin.command: modprobe zfs
+  changed_when: false
+  when: rebooted is changed
+
+- name: Check if ZFS pool is imported
+  ansible.builtin.command:
+    cmd: zpool list {{ zfs_pool }}
+  register: zpool_status
+  changed_when: false
+  failed_when: false
+
+- name: Import ZFS pool
+  ansible.builtin.command:
+    cmd: zpool import {{ zfs_pool }} -f
+  when: zpool_status.rc != 0
+  register: zpool_import
+  changed_when: zpool_import.rc == 0
+
+- name: Configure ZFS cachefile
+  ansible.builtin.command:
+    cmd: zpool set cachefile=/etc/zfs/zpool.cache {{ zfs_pool }}
+  changed_when: false
+
+- name: Enabled installed services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - nfs-server
+    - zfs-import-cache.service
+    - zfs-mount.service
+    - zfs-zed.service
+
+- name: Enable lz4 compression
+  ansible.builtin.command:
+    cmd: zfs set compression=lz4 {{ zfs_pool }}
+  changed_when: false
+
+- name: Disable atime
+  ansible.builtin.command:
+    cmd: zfs set atime=off {{ zfs_pool }}
+  changed_when: false
+
+- name: Store xattrs efficiently
+  ansible.builtin.command:
+    cmd: zfs set xattr=sa {{ zfs_pool }}
+  changed_when: false
+
+- name: Enable autoexpand
+  ansible.builtin.command:
+    cmd: zpool set autoexpand=on {{ zfs_pool }}
+  changed_when: false
+
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Wait for DNS resolution
+  ansible.builtin.command:
+    cmd: nslookup {{ item }}
+  register: dns_lookup
+  changed_when: false
+  retries: 10
+  delay: 5
+  until: dns_lookup.rc == 0
+  loop:
+    - "kopia.io"
+    - "packages.kopia.io"
+    - "github.com"
+
+- name: Download Kopia GPG key
+  ansible.builtin.get_url:
+    url: https://kopia.io/signing-key
+    dest: /tmp/kopia-signing-key
+    mode: "0644"
+  register: kopia_key
+
+- name: Install Kopia GPG key
+  ansible.builtin.command:
+    cmd: >
+      gpg --dearmor
+      --yes
+      --output /etc/apt/keyrings/kopia-keyring.gpg
+      /tmp/kopia-signing-key
+  when: kopia_key.changed
+
+- name: Configure Kopia repository
+  ansible.builtin.deb822_repository:
+    name: kopia
+    types:
+      - deb
+    uris: http://packages.kopia.io/apt/
+    suites: stable
+    components:
+      - main
+    signed_by: /etc/apt/keyrings/kopia-keyring.gpg
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install Kopia
+  ansible.builtin.apt:
+    name: kopia
+    state: present
+
+- name: Remove temporary Kopia GPG key
+  ansible.builtin.file:
+    path: /tmp/kopia-signing-key
+    state: absent
+
+- name: Create root config directory
+  ansible.builtin.file:
+    path: /root/.config/
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create rclone config directory
+  ansible.builtin.file:
+    path: /root/.config/rclone
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create Kopia config directory
+  ansible.builtin.file:
+    path: /root/.config/kopia
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0700"
+
+- name: Check if rclone configuration already exists
+  ansible.builtin.stat:
+    path: /root/.config/rclone/rclone.conf
+  register: rclone_conf
+
+- name: Install rclone configuration
+  ansible.builtin.copy:
+    src: rclone.conf
+    dest: /root/.config/rclone/rclone.conf
+    owner: root
+    group: root
+    mode: "0600"
+  when: not rclone_conf.stat.exists
+
+- name: Install Kopia repository configuration
+  ansible.builtin.copy:
+    src: repository.config
+    dest: /root/.config/kopia/repository.config
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: Install Kopia repository password
+  ansible.builtin.copy:
+    src: repository.config.kopia-password
+    dest: /root/.config/kopia/repository.config.kopia-password
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: List Kopia snapshots
+  ansible.builtin.command:
+    cmd: kopia snapshot list
+  register: kopia_snapshots
+  changed_when: false
+  ignore_errors: true
+
+- name: Display snapshot status
+  ansible.builtin.debug:
+    var: kopia_snapshots.stdout_lines
+
+- name: Clone cloud_archive repository
+  ansible.builtin.git:
+    repo: https://github.com/Shaan-somaiah/cloud_archive.git
+    dest: /home/{{ ansible_user }}/cloud_archive
+    version: main
+
+- name: Make archive log directory
+  ansible.builtin.file:
+    path: /var/log/cloud_archive
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Run archival every Sunday at 6 PM
+  ansible.builtin.cron:
+    name: "Weekly archival"
+    minute: "0"
+    hour: "18"
+    weekday: "0"
+    user: root
+    job: "/home/{{ ansible_user }}/cloud_archive/archive.py >> /var/log/cloud_archive/archive.INFO 2>&1"
+
+- name: Enable monthly ZFS scrub timer
+  ansible.builtin.systemd_service:
+    name: "zfs-scrub-monthly@{{ zfs_pool }}.timer"
+    enabled: true
+    state: started
+  

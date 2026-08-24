@@ -1,0 +1,184 @@
+---
+- name: Enable contrib repository
+  ansible.builtin.replace:
+    path: /etc/apt/sources.list
+    regexp: '^(\s*deb(?:-src)?\s+\S+\s+\S+\s+.*\bmain\b)(?!\s+contrib\b)'
+    replace: '\1 contrib'
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - linux-headers-amd64
+      - zfs-dkms
+      - zfsutils-linux
+      - zfs-zed
+      - nfs-kernel-server
+      - gpg
+      - rclone
+      - smartmontools
+      - dnsutils
+      - nvme-cli
+      - jq
+      - curl
+      - git
+      - rsync
+    state: present
+    update_cache: true
+
+- name: Allow ssh 
+  ufw: 
+    rule: allow
+    port: 22
+    proto: tcp
+
+- name: Allow nfs port in ufw
+  ufw:
+    rule: allow
+    port: 2049
+    proto: tcp
+
+- name: Enable ufw
+  ufw:
+    state: enabled
+
+- name: Attempt to load ZFS kernel module
+  ansible.builtin.command: modprobe zfs
+  register: modprobe_zfs
+  failed_when: false
+  changed_when: false
+
+- name: Reboot if ZFS module could not be loaded
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+  when: modprobe_zfs.rc != 0
+  register: rebooted
+
+- name: Load ZFS module after reboot
+  ansible.builtin.command: modprobe zfs
+  changed_when: false
+  when: rebooted is changed
+
+- name: Check if ZFS pool is imported
+  ansible.builtin.command:
+    cmd: zpool list {{ zfs_pool }}
+  register: zpool_status
+  changed_when: false
+  failed_when: false
+
+- name: Maybe import ZFS pool
+  ansible.builtin.command:
+    cmd: zpool import {{ zfs_pool }} -f
+  when: zpool_status.rc != 0
+  register: zpool_import
+  changed_when: zpool_import.rc == 0
+  failed_when: false
+
+- name: Find blank disks
+  ansible.builtin.shell:
+    cmd: >
+      lsblk -dpno NAME,TYPE,FSTYPE,PTTYPE | awk '$2=="disk" && $3=="" && $4=="" {print $1}'
+  register: blank_disks
+  when: zpool_status.rc != 0 and zpool_import.rc != 0
+
+- name: Collect lsblk output 
+  command: lsblk 
+  register: lsblk_output
+  when: zpool_status.rc != 0 and zpool_import.rc != 0
+
+- name: Ask for approval before creating ZFS pool
+  ansible.builtin.pause:
+    prompt: |
+      WARNING: About to create ZFS pool '{{ zfs_pool }}'.
+
+      Lsblk : 
+        {{ lsblk_output.stdout }}
+
+      Disk choosen for zfs pool:
+        {{ blank_disks.stdout_lines[0] }}
+
+      Command:
+        zpool create {{ zfs_pool }} {{ blank_disks.stdout_lines[0] }}
+
+      Type 'yes' to continue.
+  register: pool_approval
+  when:
+    - zpool_status.rc != 0
+    - zpool_import.rc != 0
+    - blank_disks.stdout_lines | length > 0
+
+
+- name: Create ZFS pool
+  ansible.builtin.command:
+    cmd: "zpool create {{ zfs_pool }} {{ blank_disks.stdout_lines[0] }}"
+  when:
+    - zpool_status.rc != 0
+    - zpool_import.rc != 0
+    - blank_disks.stdout_lines | length > 0
+    - pool_approval.user_input | default('') | lower == 'yes'
+  register: zpool_created
+
+
+- name: Create required datasets
+  ansible.builtin.command:
+    cmd: zfs create {{ zfs_pool }}/main/{{ item }} -p
+  when: zpool_status.rc != 0 and zpool_import.rc != 0 and zpool_created.rc == 0
+  register: zpool_create_dataset
+  changed_when: zpool_create_dataset.rc == 0
+  loop:
+    - common
+    - kube_vol
+    - pbs
+    - pbs_archive
+  
+- name: Configure ZFS cachefile
+  ansible.builtin.command:
+    cmd: zpool set cachefile=/etc/zfs/zpool.cache {{ zfs_pool }}
+  changed_when: false
+
+- name: Enabled installed services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - nfs-server
+    - zfs-import-cache.service
+    - zfs-mount.service
+    - zfs-zed.service
+
+- name: Enable lz4 compression
+  ansible.builtin.command:
+    cmd: zfs set compression=lz4 {{ zfs_pool }}
+
+- name: Disable atime
+  ansible.builtin.command:
+    cmd: zfs set atime=off {{ zfs_pool }}
+
+- name: Store xattrs efficiently
+  ansible.builtin.command:
+    cmd: zfs set xattr=sa {{ zfs_pool }}
+
+- name: Enable autoexpand
+  ansible.builtin.command:
+    cmd: zpool set autoexpand=on {{ zfs_pool }}
+
+- name: Enable monthly ZFS scrub timer
+  ansible.builtin.systemd_service:
+    name: "zfs-scrub-monthly@{{ zfs_pool }}.timer"
+    enabled: true
+    state: started
+
+- name: Copy exports file
+  ansible.builtin.copy:
+    src: exports
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restart nfs-server
+  ansible.builtin.service:
+    name: nfs-server
+    enabled: true
+    state: restarted
+  
