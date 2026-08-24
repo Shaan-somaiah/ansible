@@ -2,8 +2,8 @@
 - name: Enable contrib repository
   ansible.builtin.replace:
     path: /etc/apt/sources.list
-    regexp: '\bmain\b'
-    replace: 'main contrib'
+    regexp: '^(\s*deb(?:-src)?\s+\S+\s+\S+\s+.*\bmain\b)(?!\s+contrib\b)'
+    replace: '\1 contrib'
 
 - name: Install required packages
   ansible.builtin.apt:
