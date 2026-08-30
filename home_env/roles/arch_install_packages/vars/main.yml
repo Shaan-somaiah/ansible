@@ -21,6 +21,7 @@
     - ufw
     - kitty
     - rsync
+    - os-prober
     - rclone
     - mesa 
     - amdgpu_top
