@@ -33,7 +33,7 @@
 
 - name: Create walpaper sym link
   ansible.builtin.file:
-    src: /home/{{ ansible_user }}/.config/walpapers/lofi.jpg
+    src: /home/{{ ansible_user }}/.config/walpapers/mnt_fuji.jpg
     dest: /home/{{ ansible_user }}/.config/background.jpg
     state: link
 
