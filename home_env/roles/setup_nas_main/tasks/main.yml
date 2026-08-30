@@ -182,3 +182,154 @@
     enabled: true
     state: restarted
   
+- name: Create apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Wait for DNS resolution
+  ansible.builtin.command:
+    cmd: nslookup {{ item }}
+  register: dns_lookup
+  changed_when: false
+  retries: 10
+  delay: 5
+  until: dns_lookup.rc == 0
+  loop:
+    - "kopia.io"
+    - "packages.kopia.io"
+    - "github.com"
+
+- name: Download Kopia GPG key
+  ansible.builtin.get_url:
+    url: https://kopia.io/signing-key
+    dest: /tmp/kopia-signing-key
+    mode: "0644"
+  register: kopia_key
+
+- name: Install Kopia GPG key
+  ansible.builtin.command:
+    cmd: >
+      gpg --dearmor
+      --yes
+      --output /etc/apt/keyrings/kopia-keyring.gpg
+      /tmp/kopia-signing-key
+  when: kopia_key.changed
+
+- name: Configure Kopia repository
+  ansible.builtin.deb822_repository:
+    name: kopia
+    types:
+      - deb
+    uris: http://packages.kopia.io/apt/
+    suites: stable
+    components:
+      - main
+    signed_by: /etc/apt/keyrings/kopia-keyring.gpg
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install Kopia
+  ansible.builtin.apt:
+    name: kopia
+    state: present
+
+- name: Remove temporary Kopia GPG key
+  ansible.builtin.file:
+    path: /tmp/kopia-signing-key
+    state: absent
+
+- name: Create root config directory
+  ansible.builtin.file:
+    path: /root/.config/
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create rclone config directory
+  ansible.builtin.file:
+    path: /root/.config/rclone
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Create Kopia config directory
+  ansible.builtin.file:
+    path: /root/.config/kopia
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0700"
+
+- name: Check if rclone configuration already exists
+  ansible.builtin.stat:
+    path: /root/.config/rclone/rclone.conf
+  register: rclone_conf
+
+- name: Install rclone configuration
+  ansible.builtin.copy:
+    src: rclone.conf
+    dest: /root/.config/rclone/rclone.conf
+    owner: root
+    group: root
+    mode: "0600"
+  when: not rclone_conf.stat.exists
+
+- name: Install Kopia repository configuration
+  ansible.builtin.copy:
+    src: repository.config
+    dest: /root/.config/kopia/repository.config
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: Install Kopia repository password
+  ansible.builtin.copy:
+    src: repository.config.kopia-password
+    dest: /root/.config/kopia/repository.config.kopia-password
+    owner: "root"
+    group: "root"
+    mode: "0600"
+
+- name: List Kopia snapshots
+  ansible.builtin.command:
+    cmd: kopia snapshot list
+  register: kopia_snapshots
+  changed_when: false
+  ignore_errors: true
+
+- name: Display snapshot status
+  ansible.builtin.debug:
+    var: kopia_snapshots.stdout_lines
+
+- name: Clone cloud_archive repository
+  ansible.builtin.git:
+    repo: https://github.com/Shaan-somaiah/cloud_archive.git
+    dest: /home/{{ ansible_user }}/cloud_archive
+    version: main
+
+- name: Make archive log directory
+  ansible.builtin.file:
+    path: /var/log/cloud_archive
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: Run archival every Sunday at 6 PM
+  ansible.builtin.cron:
+    name: "Weekly archival"
+    minute: "0"
+    hour: "18"
+    weekday: "0"
+    user: root
+    job: "/home/{{ ansible_user }}/cloud_archive/archive.py >> /var/log/cloud_archive/archive.INFO 2>&1"
+  
