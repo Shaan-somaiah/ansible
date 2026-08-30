@@ -121,7 +121,14 @@
     state: directory
     mode: '0755'
 
-- name: Start containers using docker compose
+- name: Stop containers using nerdctl compose
+  command: |
+    nerdctl compose down
+  args:
+    chdir: /home/{{ ansible_user }}/dns
+  ignore_errors: true
+
+- name: Start containers using nerdctl compose
   command: |
     nerdctl compose up -d
   args:
@@ -145,10 +152,10 @@
       nameserver {{ DNS_1 }}
   when: dns_working is defined and dns_working.rc == 0
 
-- name: Add cron to restart dns
-  ansible.builtin.cron:
-    name: "Daily dns restart"
-    minute: "0"
-    hour: "6"
-    user: "root"
-    job: "/usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml down && /usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml up -d"
+# - name: Add cron to restart dns
+#   ansible.builtin.cron:
+#     name: "Daily dns restart"
+#     minute: "0"
+#     hour: "6"
+#     user: "root"
+#     job: "/usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml down && /usr/bin/nerdctl compose -f /home/{{ ansible_user }}/dns/docker-compose.yml up -d"
