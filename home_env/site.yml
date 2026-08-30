@@ -34,10 +34,10 @@
   roles:
     - { role: setup_nas_main, become: true }
 
-- name: Setup nas-node2
-  hosts: nas-node2
-  roles:
-    - { role: setup_nas_node2, become: true }
+# - name: Setup nas-node2
+#   hosts: nas-node2
+#   roles:
+#     - { role: setup_nas_node2, become: true }
 
 - name: setup arch-main
   hosts: arch-main
