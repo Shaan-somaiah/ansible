@@ -80,13 +80,26 @@
     group: "{{ ansible_user }}"
     mode: "0600"
 
+- name: Download Flannel manifest
+  ansible.builtin.get_url:
+    url: "{{ flannel_manifest }}"
+    dest: "{{ flannel_manifest_local }}"
+    mode: "0644"
+
+## Ends up binding to wrong interface on raspi
+- name: Add Flannel interface detection
+  ansible.builtin.replace:
+    path: "{{ flannel_manifest_local }}"
+    regexp: '(\s+- --kube-subnet-mgr\s*\n)'
+    replace: '\1        - --iface-can-reach=10.25.30.51\n'
+
 - name: Install Flannel
   command:
     argv:
       - kubectl
       - apply
       - -f
-      - "{{ flannel_manifest }}"
+      - "{{ flannel_manifest_local }}"
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
