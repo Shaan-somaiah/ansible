@@ -57,7 +57,7 @@
     - otf-codenewroman-nerd
     - dnsmasq
     - hyprpicker
-    - python-pywal
+    # - python-pywal
     - blueman
     - gvfs
     - nmap
