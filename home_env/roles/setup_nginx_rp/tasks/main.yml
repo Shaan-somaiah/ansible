@@ -34,10 +34,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
-- name: Start nginx container
-  community.docker.docker_compose_v2:
-    project_src: "{{ nginx_base_dir }}"
-
 - name: Check acme.sh installation
   stat:
     path: "/home/{{ ansible_user }}/.acme.sh/acme.sh"
@@ -60,7 +56,7 @@
   when: not acme_installed.stat.exists
 
 - name: Check acme managed certificates for {{ wildcard_domain }}
-  shell: ~/.acme.sh/acme.sh --list
+  shell: /home/{{ ansible_user }}/.acme.sh/acme.sh --list
   become_user: "{{ ansible_user }}"
   register: acme_list
   changed_when: false
@@ -69,7 +65,7 @@
   shell: |
     export CF_Token="{{ cloudflare_api_token }}"
 
-    ~/.acme.sh/acme.sh \
+    /home/{{ ansible_user }}/.acme.sh/acme.sh \
       --issue \
       --server letsencrypt \
       --dns dns_cf \
@@ -81,7 +77,7 @@
 
 - name: Install certificate into {{ nginx_base_dir }}/certs
   shell: |
-    ~/.acme.sh/acme.sh \
+    /home/{{ ansible_user }}/.acme.sh/acme.sh \
       --install-cert \
       -d "{{ wildcard_domain }}" \
       --key-file {{ nginx_base_dir }}/certs/privkey.pem \
@@ -102,3 +98,56 @@
     msg: "Certificate installation failed"
   when: not item.stat.exists
   loop: "{{ cert_files.results }}"
+
+- name: Stop containers using nerdctl compose
+  command: |
+    nerdctl compose down
+  args:
+    chdir: "{{ nginx_base_dir }}"
+  ignore_errors: true
+
+- name: Start containers using nerdctl compose
+  command: |
+    nerdctl compose up -d
+  args:
+    chdir: "{{ nginx_base_dir }}"
+
+- name: Allow https to host
+  ufw:
+    rule: allow
+    port: 443
+    proto: "{{ item }}"
+  loop:
+    - tcp
+    - udp
+
+- name: Allow forwarded https to containers
+  ufw:
+    rule: allow
+    route: yes
+    to_ip: 172.25.100.0/24
+    port: 443
+    proto: "{{ item }}"
+  loop:
+    - udp
+    - tcp
+
+- name: Allow http to host
+  ufw:
+    rule: allow
+    port: 80
+    proto: "{{ item }}"
+  loop:
+    - tcp
+    - udp
+
+- name: Allow forwarded http to containers
+  ufw:
+    rule: allow
+    route: yes
+    to_ip: 172.25.100.0/24
+    port: 80
+    proto: "{{ item }}"
+  loop:
+    - udp
+    - tcp

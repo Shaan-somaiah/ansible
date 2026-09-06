@@ -24,9 +24,10 @@
     port: 5403
     proto: tcp
 
-- name: Enable ufw
+## Todo : setup explictly forward rules for nginx
+- name: Disable ufw
   ufw:
-    state: enabled
+    state: disabled
 
 - name: Enable corosync-qnetd
   systemd:
