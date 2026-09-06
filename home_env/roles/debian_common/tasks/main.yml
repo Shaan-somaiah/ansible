@@ -33,6 +33,7 @@
       - iotop
       - btop
       - tmux
+      - vim
     state: present
     update_cache: yes
 
