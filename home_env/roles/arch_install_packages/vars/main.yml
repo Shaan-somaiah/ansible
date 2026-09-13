@@ -90,4 +90,6 @@
     - strace
     - nvme-cli
     - postgresql
+    - gamescope
+    - vulkan-tools
     - tmux
