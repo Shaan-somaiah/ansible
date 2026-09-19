@@ -324,12 +324,11 @@
     group: "root"
     mode: "0755"
 
-- name: Run archival every Sunday at 6 PM
+- name: Run archival daily at 6 PM
   ansible.builtin.cron:
-    name: "Weekly archival"
+    name: "Daily archival"
     minute: "0"
     hour: "18"
-    weekday: "0"
     user: root
     job: "/home/{{ ansible_user }}/cloud_archive/archive.py >> /var/log/cloud_archive/archive.INFO 2>&1"
   
