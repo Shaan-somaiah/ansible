@@ -24,3 +24,4 @@ networks:
   dns_net:
     external: true
     name: dns_dns_net
+

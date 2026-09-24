@@ -20,7 +20,8 @@ services:
       - SYS_NICE
     restart: unless-stopped
     networks:
-      - dns_net
+      dns_net:
+        ipv4_address: 172.25.100.8
 
   bind:
     container_name: bind9
