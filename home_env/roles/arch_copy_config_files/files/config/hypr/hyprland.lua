@@ -124,6 +124,7 @@ hl.bind("SUPER + SHIFT + 1", hl.dsp.window.move({ workspace = 1 }))
 hl.bind("SUPER + SHIFT + 2", hl.dsp.window.move({ workspace = 2 }))
 hl.bind("SUPER + SHIFT + 3", hl.dsp.window.move({ workspace = 3 }))
 hl.bind("SUPER + SHIFT + 4", hl.dsp.window.move({ workspace = 4 }))
+hl.bind("SUPER + SHIFT + 5", hl.dsp.window.move({ workspace = 5 }))
 
 hl.bind("SUPER + Page_Up", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind("SUPER + Page_Down", hl.dsp.focus({ workspace = "e-1" }))
