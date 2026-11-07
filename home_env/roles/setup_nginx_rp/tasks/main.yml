@@ -99,18 +99,36 @@
   when: not item.stat.exists
   loop: "{{ cert_files.results }}"
 
-- name: Stop containers using nerdctl compose
-  command: |
-    nerdctl compose down
-  args:
-    chdir: "{{ nginx_base_dir }}"
-  ignore_errors: true
+# - name: Stop containers using nerdctl compose
+#   command: |
+#     nerdctl compose down
+#   args:
+#     chdir: "{{ nginx_base_dir }}"
+#   ignore_errors: true
 
-- name: Start containers using nerdctl compose
-  command: |
-    nerdctl compose up -d
-  args:
-    chdir: "{{ nginx_base_dir }}"
+# - name: Start containers using nerdctl compose
+#   command: |
+#     nerdctl compose up -d
+#   args:
+#     chdir: "{{ nginx_base_dir }}"
+
+- name: Deploy systemd service file
+  copy:
+    src: nginx-con.service
+    dest: "/etc/systemd/system/nginx-con.service"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start nginx service
+  ansible.builtin.systemd:
+    name: nginx-con.service
+    enabled: true
+    state: restarted
 
 - name: Allow https to host
   ufw:
@@ -151,3 +169,4 @@
   loop:
     - udp
     - tcp
+
